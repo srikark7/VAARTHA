@@ -8,13 +8,20 @@ from google.genai import types
 
 class Config:
     PORT = int(os.environ.get("PORT", 3000))
-    MODEL_ID = "gemini-2.0-flash" 
-    API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAf25So8PlysTYKbqAcBzUOSJbUr6tMxp8")
+    # Using the latest 2.5 Flash for accuracy
+    MODEL_ID = "gemini-2.5-flash"
+    # Fallback model in case of heavy traffic
+    LITE_MODEL = "gemini-2.5-flash-lite"
+    # YOUR NEW API KEY
+    API_KEY = "AIzaSyDfPAs2wWPmX0xLl3dbTdX4Kc4igBaoeHw"
 
 app = Flask(__name__, template_folder='.')
+
+# Logging to help you see errors in the Render/CMD console
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("VAARTHA-Backend")
 
+# Initialize Gemini Client
 client = genai.Client(api_key=Config.API_KEY)
 
 def verify_claim(claim: str):
@@ -27,7 +34,6 @@ def verify_claim(claim: str):
     
     TASK:
     Base your answers on your internal knowledge and the system facts above.
-
     CLAIM TO VERIFY: "{claim}"
 
     Return ONLY a JSON object with:
@@ -37,18 +43,34 @@ def verify_claim(claim: str):
     """
     
     try:
+        # Try with the main 2.5 Flash model
         response = client.models.generate_content(
             model=Config.MODEL_ID,
             contents=prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                temperature=0.2
+                temperature=0.1
             )
         )
         return json.loads(response.text)
     except Exception as e:
-        logger.error(f"AI Verification error: {e}")
-        return None
+        logger.warning(f"Primary model failed: {e}. Trying Lite model...")
+        try:
+            # Automatic fallback to Flash-Lite if 2.5 is busy
+            response = client.models.generate_content(
+                model=Config.LITE_MODEL,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    temperature=0.1
+                )
+            )
+            return json.loads(response.text)
+        except Exception as e2:
+            logger.error(f"Both models failed: {e2}")
+            return None
+
+# --- APP ROUTES ---
 
 @app.route("/", methods=["GET"])
 def home():
@@ -69,18 +91,7 @@ def contact():
 @app.route("/submit_contact", methods=["POST"])
 def submit_contact():
     name = request.form.get("name")
-    email = request.form.get("email")
-    phone = request.form.get("phone", "Not provided")
-    subject = request.form.get("subject")
-    message = request.form.get("message")
-    
-    logger.info("NEW CONTACT FORM SUBMISSION")
-    logger.info(f"Name: {name}")
-    logger.info(f"Email: {email}")
-    logger.info(f"Phone: {phone}")
-    logger.info(f"Subject: {subject}")
-    logger.info(f"Message: {message}")
-    
+    logger.info(f"New contact form from: {name}")
     return jsonify({"status": "success", "message": "Message received!"})
 
 @app.route("/predict", methods=["POST"])
@@ -90,36 +101,28 @@ def predict():
     current_date = datetime.now().strftime("%B %d, %Y")
     
     if uploaded_file and uploaded_file.filename != "":
-        if not uploaded_file.filename.endswith('.txt'):
-            return render_template("result.html", prediction="Error", confidence=0, reasoning="Invalid file type. Please upload a .txt file.", analysis_date=current_date)
         try:
             news_text = uploaded_file.read().decode("utf-8").strip()
-        except Exception:
-            return render_template("result.html", prediction="Error", confidence=0, reasoning="Could not read the uploaded file.", analysis_date=current_date)
+        except:
+            pass
     
     if not news_text:
-        return render_template("result.html", prediction="Error", confidence=0, reasoning="No text provided. Please enter a claim or upload a file.", analysis_date=current_date)
-    
-    if len(news_text) > 5000:
-        news_text = news_text[:5000]
-    
-    logger.info(f"Analyzing Claim: {news_text[:60]}...")
-    
+        return render_template("result.html", prediction="Error", confidence=0, reasoning="Please provide text.", analysis_date=current_date)
+
     result = verify_claim(news_text)
     
     if not result:
-        return render_template("result.html", prediction="Error", confidence=0, reasoning="Server error or API Key issue. Please try again.", analysis_date=current_date)
-    
-    verdict = result.get("verdict", "Unverified").capitalize()
-    confidence = result.get("confidence", 0)
-    reasoning = result.get("reasoning", "Analysis complete.")
+        return render_template("result.html", 
+                               prediction="Service Error", 
+                               confidence=0, 
+                               reasoning="AI Quota exhausted. Please try again in 1-2 minutes.", 
+                               analysis_date=current_date)
     
     return render_template("result.html", 
-                           prediction=verdict, 
-                           confidence=confidence, 
-                           reasoning=reasoning,
+                           prediction=result.get("verdict", "Unknown").capitalize(), 
+                           confidence=result.get("confidence", 0), 
+                           reasoning=result.get("reasoning", "Analysis complete."),
                            analysis_date=current_date)
 
 if __name__ == "__main__":
-    print("VAARTHA SYSTEM FULLY OPERATIONAL")
     app.run(host="0.0.0.0", port=Config.PORT, debug=True)
