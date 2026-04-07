@@ -8,8 +8,8 @@ from google.genai import types
 
 class Config:
     PORT = int(os.environ.get("PORT", 3000))
-    MODEL_ID = "gemini-2.5-flash" 
-    API_KEY = os.environ.get("AIzaSyAf25So8PlysTYKbqAcBzUOSJbUr6tMxp8")
+    MODEL_ID = "gemini-2.0-flash" 
+    API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAf25So8PlysTYKbqAcBzUOSJbUr6tMxp8")
 
 app = Flask(__name__, template_folder='.')
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
