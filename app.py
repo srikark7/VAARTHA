@@ -11,7 +11,7 @@ class Config:
     MODEL_ID = "gemini-2.5-flash" 
     API_KEY = os.environ.get("AIzaSyAf25So8PlysTYKbqAcBzUOSJbUr6tMxp8")
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("VAARTHA-Backend")
 
