@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - VAARTHA Fake News Detection</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0052CC;
+            --primary-dark: #003DA1;
+            --secondary-color: #00B4D8;
+            --accent-color: #FF6B6B;
+            --light-bg: #F8FAFC;
+            --dark-bg: #FFFFFF;
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+            --text-tertiary: #718096;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(0, 52, 161, 0.12);
+            --shadow-lg: 0 16px 48px rgba(0, 52, 161, 0.15);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ─────────────────────────────────────────
+           NAVBAR
+           ───────────────────────────────────────── */
+        .nav {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            padding: 16px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav a:hover:after {
+            width: 100%;
+        }
+
+        /* ─────────────────────────────────────────
+           HERO SECTION
+           ───────────────────────────────────────── */
+        .hero {
+            padding-top: 140px;
+            padding-bottom: 80px;
+            background: linear-gradient(135deg, #F8FAFC 0%, #EFF8FF 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.1), rgba(0, 180, 216, 0.1));
+            border: 1px solid rgba(0, 52, 161, 0.2);
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        /* ─────────────────────────────────────────
+           SERVICES SECTION
+           ───────────────────────────────────────── */
+        .services-section {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .service-card {
+            background: var(--dark-bg);
+            padding: 40px 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:nth-child(1) { animation-delay: 0.4s; }
+        .service-card:nth-child(2) { animation-delay: 0.5s; }
+        .service-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .service-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .service-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+        }
+
+        .service-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .service-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .service-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ─────────────────────────────────────────
+           API SECTION
+           ───────────────────────────────────────── */
+        .api-section {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .api-container {
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.05) 0%, rgba(0, 180, 216, 0.05) 100%);
+            border: 1px solid rgba(0, 52, 161, 0.1);
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .api-container h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .api-container p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .api-btn {
+            display: inline-block;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .api-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 52, 161, 0.3);
+        }
+
+        /* ─────────────────────────────────────────
+           FOOTER
+           ───────────────────────────────────────── */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* ─────────────────────────────────────────
+           ANIMATIONS
+           ───────────────────────────────────────── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─────────────────────────────────────────
+           RESPONSIVE
+           ───────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 14px 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero {
+                padding-top: 100px;
+                padding-bottom: 60px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .services-section {
+                padding: 60px 20px;
+            }
+
+            .section-header h2 {
+                font-size: 32px;
+            }
+
+            .api-section {
+                padding: 60px 20px;
+            }
+
+            .api-container {
+                padding: 40px 24px;
+            }
+
+            .api-container h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="nav-logo">VAARTHA</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Our Services</div>
+            <h1>Comprehensive News Verification Solutions</h1>
+            <p>Explore the powerful tools VAARTHA uses to identify and combat fake news. We provide everything you need to verify content with confidence.</p>
+        </div>
+    </section>
+
+    <section class="services-section">
+        <div class="section-header">
+            <h2>What We Offer</h2>
+            <p>Powerful tools to identify and combat fake news</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🔍</div>
+                <h3>Text Analysis</h3>
+                <p>Advanced machine learning algorithms analyze text patterns, linguistic structures, and semantic content to identify misinformation indicators.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">⚡</div>
+                <h3>Real-Time Detection</h3>
+                <p>Get instant results from our API. Process news articles, social media posts, and web content in milliseconds with high accuracy.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Detailed Reports</h3>
+                <p>Receive comprehensive analysis with confidence scores, feature importance breakdown, and detailed recommendations for content verification.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="api-section">
+        <div class="api-container">
+            <h2>Developer-Friendly API</h2>
+            <p>Integrate VAARTHA's powerful detection capabilities directly into your platform. We provide comprehensive documentation, SDKs, and 24/7 support.</p>
+            <a href="/contact" class="api-btn">View API Documentation</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 VAARTHA. All rights reserved. Combating misinformation with AI.</p>
+    </footer>
+</body>
+</html>

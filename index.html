@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAARTHA - AI-Powered Fake News Detection Platform</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0052CC;
+            --primary-dark: #003DA1;
+            --secondary-color: #00B4D8;
+            --accent-color: #FF6B6B;
+            --light-bg: #F8FAFC;
+            --dark-bg: #FFFFFF;
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+            --text-tertiary: #718096;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(0, 52, 161, 0.12);
+            --shadow-lg: 0 16px 48px rgba(0, 52, 161, 0.15);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ─────────────────────────────────────────
+           NAVBAR
+           ───────────────────────────────────────── */
+        .nav {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            padding: 16px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav a:hover:after {
+            width: 100%;
+        }
+
+        /* ─────────────────────────────────────────
+           HERO SECTION
+           ───────────────────────────────────────── */
+        .hero {
+            padding-top: 140px;
+            padding-bottom: 100px;
+            background: linear-gradient(135deg, #F8FAFC 0%, #EFF8FF 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 180, 216, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 52, 161, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease 0.2s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.1), rgba(0, 180, 216, 0.1));
+            border: 1px solid rgba(0, 52, 161, 0.2);
+            border-radius: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 52, 161, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 52, 161, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--dark-bg);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-bg);
+            transform: translateY(-3px);
+        }
+
+        /* ─────────────────────────────────────────
+           FEATURES SECTION
+           ───────────────────────────────────────── */
+        .features-section {
+            padding: 100px 40px;
+            background: var(--dark-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .section-header p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.02) 0%, rgba(0, 180, 216, 0.02) 100%);
+            padding: 40px 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease both;
+            text-align: center;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.3s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.5s; }
+
+        .feature-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-12px);
+            background: var(--dark-bg);
+            border-color: var(--primary-color);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ─────────────────────────────────────────
+           HOW IT WORKS
+           ───────────────────────────────────────── */
+        .how-it-works {
+            padding: 100px 40px;
+            background: linear-gradient(135deg, #F8FAFC 0%, #EFF8FF 100%);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .step-card {
+            background: var(--dark-bg);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            animation: fadeInUp 0.8s ease both;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:nth-child(1) { animation-delay: 0.3s; }
+        .step-card:nth-child(2) { animation-delay: 0.4s; }
+        .step-card:nth-child(3) { animation-delay: 0.5s; }
+        .step-card:nth-child(4) { animation-delay: 0.6s; }
+
+        .step-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-6px);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .step-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .step-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .step-card:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+        }
+
+        /* ─────────────────────────────────────────
+           BENEFITS SECTION
+           ───────────────────────────────────────── */
+        .benefits-section {
+            padding: 100px 40px;
+            background: var(--dark-bg);
+        }
+
+        .benefits-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .benefits-content {
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .benefits-content h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 38px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .benefits-content p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease both;
+        }
+
+        .benefit-item:nth-child(1) { animation-delay: 0.3s; }
+        .benefit-item:nth-child(2) { animation-delay: 0.4s; }
+        .benefit-item:nth-child(3) { animation-delay: 0.5s; }
+
+        .benefit-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .benefit-text h3 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .benefit-text p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .benefits-image {
+            animation: fadeInUp 0.8s ease 0.3s both;
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.1) 0%, rgba(0, 180, 216, 0.1) 100%);
+            padding: 60px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 80px;
+        }
+
+        /* ─────────────────────────────────────────
+           CHECK NEWS SECTION
+           ───────────────────────────────────────── */
+        .check-news-section {
+            padding: 100px 40px;
+            background: var(--light-bg);
+        }
+
+        .check-news-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--dark-bg);
+            padding: 50px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .check-news-container h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .check-news-container p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .news-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-group textarea {
+            padding: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group input[type="file"] {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input[type="file"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-options {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-options label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-options input[type="radio"] {
+            margin: 0;
+        }
+
+        .submit-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: center;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 52, 161, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ─────────────────────────────────────────
+           CTA SECTION
+           ───────────────────────────────────────── */
+        .cta-section {
+            padding: 100px 40px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            text-align: center;
+            color: white;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        /* ─────────────────────────────────────────
+           TESTIMONIALS SECTION
+           ───────────────────────────────────────── */
+        .testimonials-section {
+            padding: 100px 40px;
+            background: var(--light-bg);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: 60px;
+        }
+
+        .testimonial-card {
+            background: var(--dark-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.8s ease both;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:nth-child(1) { animation-delay: 0.3s; }
+        .testimonial-card:nth-child(2) { animation-delay: 0.4s; }
+        .testimonial-card:nth-child(3) { animation-delay: 0.5s; }
+
+        .testimonial-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-6px);
+        }
+
+        .testimonial-stars {
+            color: #FFA500;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .author-info h4 {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .author-info p {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin: 0;
+        }
+
+        /* ─────────────────────────────────────────
+           FOOTER
+           ───────────────────────────────────────── */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* ─────────────────────────────────────────
+           ANIMATIONS
+           ───────────────────────────────────────── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ─────────────────────────────────────────
+           RESPONSIVE
+           ───────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 14px 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero {
+                padding-top: 100px;
+                padding-bottom: 60px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .features-section {
+                padding: 60px 20px;
+            }
+
+            .section-header h2 {
+                font-size: 32px;
+            }
+
+            .how-it-works {
+                padding: 60px 20px;
+            }
+
+            .steps-grid {
+                gap: 20px;
+            }
+
+            .step-card:not(:last-child)::after {
+                display: none;
+            }
+
+            .benefits-section {
+                padding: 60px 20px;
+            }
+
+            .benefits-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .benefits-content h2 {
+                font-size: 28px;
+            }
+
+            .cta-section {
+                padding: 60px 20px;
+            }
+
+            .cta-section h2 {
+                font-size: 32px;
+            }
+
+            .cta-section p {
+                font-size: 16px;
+            }
+
+            .testimonials-section {
+                padding: 60px 20px;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="nav-logo">VAARTHA</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Welcome to VAARTHA</div>
+            <h1>Detect Fake News with AI-Powered Intelligence</h1>
+            <p>VAARTHA uses advanced machine learning to analyze news content and instantly identify misinformation. Stay informed with accurate, verified information in the digital age.</p>
+            <div class="hero-buttons">
+                <a href="/services" class="btn btn-primary">Start Detecting Now</a>
+                <a href="/about" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Why Choose VAARTHA?</h2>
+            <p>Powerful tools designed to combat misinformation effectively</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Get instant detection results in seconds. Our optimized algorithms process news content in real-time without compromising accuracy.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Highly Accurate</h3>
+                <p>Trained on thousands of verified news sources, our AI model achieves industry-leading accuracy rates in fake news detection.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>Your data is protected with enterprise-grade security. We never share or store your analyzed content without permission.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Simple, transparent process for detecting misinformation</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Input Content</h3>
+                <p>Paste your news text or URL. VAARTHA accepts multiple formats including articles, social media posts, and web content.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>AI Analysis</h3>
+                <p>Our machine learning model analyzes linguistic patterns, source credibility, and content authenticity using advanced NLP.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Verification</h3>
+                <p>Cross-reference with verified databases and trusted sources to validate the accuracy of the information presented.</p>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>Get Results</h3>
+                <p>Receive a detailed report with confidence scores, analysis breakdown, and recommendations on content reliability.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="check-news-section">
+        <div class="check-news-container">
+            <h2>Check News Now</h2>
+            <p>Paste your news article text below or upload a file to analyze its authenticity using our AI-powered detection system.</p>
+            
+            <form action="/predict" method="POST" enctype="multipart/form-data" class="news-form">
+                <div class="form-group">
+                    <label for="news">News Text</label>
+                    <textarea id="news" name="news" placeholder="Paste your news article text here..."></textarea>
+                </div>
+                
+                <div class="form-options">
+                    <span style="font-weight: 600; color: var(--text-primary);">OR</span>
+                    <div class="form-group" style="margin: 0;">
+                        <label for="file" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="file" id="file" name="file" accept=".txt,.doc,.docx,.pdf" style="display: none;">
+                            📎 Upload File
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Analyze News</button>
+            </form>
+
+            {% if prediction %}
+                <div style="margin-top: 30px; padding: 20px; border-radius: 8px; border: 3px solid {{ color }}; background-color: #f9f9f9;">
+                    <h3 style="color: {{ color }}; margin-top: 0;">Fact Check Result:</h3>
+                    <p style="font-size: 18px; font-weight: bold; color: #333; margin-bottom: 0;">{{ prediction }}</p>
+                </div>
+            {% endif %}
+            </div>
+    </section>
+
+    <section class="benefits-section">
+        <div class="benefits-container">
+            <div class="benefits-content">
+                <h2>Empower Your Information Diet</h2>
+                <p>Make informed decisions with VAARTHA's comprehensive misinformation detection capabilities.</p>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <h3>Real-Time Detection</h3>
+                        <p>Instantly identify fake news before it spreads</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <h3>Detailed Analytics</h3>
+                        <p>Understand why content is flagged with transparent reports</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">
+                        <h3>API Access</h3>
+                        <p>Integrate VAARTHA into your platform seamlessly</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="benefits-image">
+                🤖
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section">
+        <div class="section-header">
+            <h2>What Users Say</h2>
+            <p>Join thousands of satisfied users using VAARTHA</p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"VAARTHA has been a game-changer for our organization. We now identify misinformation quickly and can inform our audience with confidence."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JD</div>
+                    <div class="author-info">
+                        <h4>John Davis</h4>
+                        <p>News Editor</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"The accuracy is impressive. VAARTHA's AI caught fake stories that we nearly published. Highly recommend for any media organization."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">SR</div>
+                    <div class="author-info">
+                        <h4>Sarah Rodriguez</h4>
+                        <p>Journalist</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"As a researcher, VAARTHA has saved me countless hours verifying sources. The detailed reports are incredibly helpful."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">AK</div>
+                    <div class="author-info">
+                        <h4>Alex Kumar</h4>
+                        <p>Research Analyst</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Combat Misinformation?</h2>
+            <p>Join the VAARTHA community today and take control of your information consumption</p>
+            <div class="hero-buttons">
+                <a href="/services" class="btn btn-primary">Get Started Now</a>
+                <a href="/contact" class="btn btn-secondary" style="border-color: white; color: white;">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 VAARTHA. All rights reserved. Combating misinformation with AI.</p>
+    </footer>
+
+    <script>
+        // Form interaction logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsTextarea = document.getElementById('news');
+            const fileInput = document.getElementById('file');
+            const fileLabel = document.querySelector('label[for="file"]');
+            const submitBtn = document.querySelector('.submit-btn');
+            
+            // Update file label when file is selected
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    fileLabel.innerHTML = '📎 ' + this.files[0].name;
+                    newsTextarea.disabled = true;
+                    newsTextarea.style.opacity = '0.5';
+                } else {
+                    fileLabel.innerHTML = '📎 Upload File';
+                    newsTextarea.disabled = false;
+                    newsTextarea.style.opacity = '1';
+                }
+            });
+            
+            // Form validation
+            document.querySelector('.news-form').addEventListener('submit', function(e) {
+                const hasText = newsTextarea.value.trim().length > 0;
+                const hasFile = fileInput.files && fileInput.files[0];
+                
+                if (!hasText && !hasFile) {
+                    e.preventDefault();
+                    alert('Please either paste news text or upload a file.');
+                    return false;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Analyzing...';
+            });
+        });
+    </script>
+    
+</body>
+</html>

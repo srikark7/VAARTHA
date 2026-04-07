@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Result - VAARTHA</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0052CC;
+            --primary-dark: #003DA1;
+            --secondary-color: #00B4D8;
+            --accent-color: #FF6B6B;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --light-bg: #F8FAFC;
+            --dark-bg: #FFFFFF;
+            --text-primary: #1A202C;
+            --text-secondary: #4A5568;
+            --text-tertiary: #718096;
+            --border-color: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(0, 52, 161, 0.12);
+            --shadow-lg: 0 16px 48px rgba(0, 52, 161, 0.15);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ─────────────────────────────────────────
+           NAVBAR
+           ───────────────────────────────────────── */
+        .nav {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            padding: 16px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav a:hover:after {
+            width: 100%;
+        }
+
+        /* ─────────────────────────────────────────
+           RESULT CONTAINER
+           ───────────────────────────────────────── */
+        .container {
+            padding-top: 140px;
+            padding-bottom: 80px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-box {
+            background: var(--dark-bg);
+            padding: 60px 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            animation: slideIn 0.6s ease;
+        }
+
+        /* ─────────────────────────────────────────
+           RESULT TITLE
+           ───────────────────────────────────────── */
+        .result-box h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+        }
+
+        /* ─────────────────────────────────────────
+           RESULT STATUS
+           ───────────────────────────────────────── */
+        .result-status {
+            margin-bottom: 40px;
+        }
+
+        .result-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.6s ease 0.2s both;
+        }
+
+        .result-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            animation: fadeInUp 0.8s ease 0.3s both;
+            letter-spacing: -0.5px;
+        }
+
+        .result-text.real {
+            color: var(--success-color);
+        }
+
+        .result-text.fake {
+            color: var(--accent-color);
+        }
+
+        .result-text.misleading {
+            color: var(--warning-color);
+        }
+
+        .result-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .ai-reasoning {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            font-style: italic;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        /* ─────────────────────────────────────────
+           CONFIDENCE BADGE
+           ───────────────────────────────────────── */
+        .confidence-badge {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.1), rgba(0, 180, 216, 0.1));
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.5s both;
+        }
+
+        .confidence-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--primary-dark);
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .confidence-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* ─────────────────────────────────────────
+           ACTION BUTTONS
+           ───────────────────────────────────────── */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 52, 161, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 52, 161, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* ─────────────────────────────────────────
+           RESULT INFO
+           ───────────────────────────────────────── */
+        .result-info {
+            background: linear-gradient(135deg, rgba(0, 52, 161, 0.02) 0%, rgba(0, 180, 216, 0.02) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 40px;
+            text-align: left;
+            animation: fadeInUp 0.8s ease 0.7s both;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .info-value {
+            color: var(--text-secondary);
+        }
+
+        /* ─────────────────────────────────────────
+           FOOTER
+           ───────────────────────────────────────── */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 80px;
+        }
+
+        /* ─────────────────────────────────────────
+           ANIMATIONS
+           ───────────────────────────────────────── */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ─────────────────────────────────────────
+           RESPONSIVE
+           ───────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 14px 20px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            .container {
+                padding-top: 100px;
+                padding-bottom: 60px;
+            }
+
+            .result-box {
+                padding: 40px 24px;
+            }
+
+            .result-box h1 {
+                font-size: 26px;
+            }
+
+            .result-icon {
+                font-size: 60px;
+            }
+
+            .result-text {
+                font-size: 32px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .result-info {
+                margin-top: 30px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="nav-logo">VAARTHA</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/services">Services</a>
+            <a href="/contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="result-box">
+            <h1>Detection Result</h1>
+
+            <div class="result-status">
+                <div class="result-icon">
+                    {% if prediction == 'Real' %}
+                        ✓
+                    {% elif prediction == 'Misleading' %}
+                        ⚠
+                    {% else %}
+                        ✗
+                    {% endif %}
+                </div>
+                <div class="result-text {% if prediction == 'Real' %}real{% elif prediction == 'Misleading' %}misleading{% else %}fake{% endif %}">
+                    {{ prediction }}
+                </div>
+                <p class="result-description">
+                    {% if prediction == 'Real' %}
+                        This news appears to be from a reliable source and contains verified information.
+                    {% elif prediction == 'Misleading' %}
+                        This news contains elements of truth but lacks crucial context or presents information deceptively.
+                    {% else %}
+                        This news shows characteristics inconsistent with verified information sources.
+                    {% endif %}
+                </p>
+                
+                <div class="ai-reasoning">
+                    "{{ reasoning }}"
+                </div>
+            </div>
+
+            <div class="confidence-badge">
+                <div class="confidence-label">Confidence Level</div>
+                <div class="confidence-value">{{ confidence }}%</div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="/" class="btn btn-primary">Check Another News</a>
+                <a href="/services" class="btn btn-secondary">Learn More</a>
+            </div>
+
+            <div class="result-info">
+                <div class="info-row">
+                    <span class="info-label">Classification</span>
+                    <span class="info-value">{{ prediction }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Analysis Date</span>
+                    <span class="info-value">{{ analysis_date }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">
+                        {% if prediction == 'Real' %}
+                            <span style="color: var(--success-color);">✓ Verified</span>
+                        {% elif prediction == 'Misleading' %}
+                            <span style="color: var(--warning-color);">⚠ Caution Needed</span>
+                        {% else %}
+                            <span style="color: var(--accent-color);">✗ Unverified</span>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 VAARTHA. All rights reserved. Combating misinformation with AI.</p>
+    </footer>
+</body>
+</html>
