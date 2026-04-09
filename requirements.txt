@@ -1,3 +1,10 @@
-flask
-google-genai
-gunicorn
+Flask==3.0.3
+gunicorn==21.2.0
+numpy==1.26.4
+pandas==2.2.2
+python-dotenv==1.0.1
+requests==2.32.3
+scikit-learn==1.5.1
+sentence-transformers==3.0.1
+transformers==4.43.3
+torch==2.3.1
