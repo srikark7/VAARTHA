@@ -1,0 +1,32 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+
+# Logs
+*.log
+veritas.log
+
+# Local uploads and generated artifacts
+uploads/*
+!uploads/.gitkeep
+
+# Large local datasets and models (do not push for deploy)
+Fake.csv
+True.csv
+Fake_updated.csv
+True_updated.csv
+model.pkl
+vectorizer.pkl
+
+# OS/editor
+.vscode/
+.DS_Store
+Thumbs.db
