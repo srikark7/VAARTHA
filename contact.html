@@ -1,724 +1,359 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact VAARTHA - Get in Touch</title>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #0052CC;
-            --primary-dark: #003DA1;
-            --secondary-color: #00B4D8;
-            --accent-color: #FF6B6B;
-            --light-bg: #F8FAFC;
-            --dark-bg: #FFFFFF;
-            --text-primary: #1A202C;
-            --text-secondary: #4A5568;
-            --text-tertiary: #718096;
-            --border-color: #E2E8F0;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 8px 24px rgba(0, 52, 161, 0.12);
-            --shadow-lg: 0 16px 48px rgba(0, 52, 161, 0.15);
-            --success-color: #10B981;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--light-bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* ─────────────────────────────────────────
-           NAVBAR
-           ───────────────────────────────────────── */
-        .nav {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            padding: 16px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            z-index: 1000;
-        }
-
-        .nav-logo {
-            font-family: 'Poppins', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 40px;
-        }
-
-        .nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav a:after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            transition: width 0.3s ease;
-        }
-
-        .nav a:hover {
-            color: var(--primary-color);
-        }
-
-        .nav a:hover:after {
-            width: 100%;
-        }
-
-        /* ─────────────────────────────────────────
-           HERO SECTION
-           ───────────────────────────────────────── */
-        .hero {
-            padding-top: 140px;
-            padding-bottom: 80px;
-            background: linear-gradient(135deg, #F8FAFC 0%, #EFF8FF 100%);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .hero-content {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 40px;
-            text-align: center;
-            animation: fadeInUp 0.8s ease 0.2s both;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, rgba(0, 52, 161, 0.1), rgba(0, 180, 216, 0.1));
-            border: 1px solid rgba(0, 52, 161, 0.2);
-            border-radius: 24px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .hero h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 52px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 20px;
-            line-height: 1.2;
-            letter-spacing: -1px;
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-            line-height: 1.8;
-        }
-
-        /* ─────────────────────────────────────────
-           CONTACT SECTION
-           ───────────────────────────────────────── */
-        .contact-section {
-            padding: 100px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .contact-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: start;
-        }
-
-        /* ─────────────────────────────────────────
-           CONTACT FORM
-           ───────────────────────────────────────── */
-        .contact-form {
-            animation: fadeInUp 0.8s ease 0.2s both;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background-color: var(--dark-bg);
-            color: var(--text-primary);
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 52, 161, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px 24px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 52, 161, 0.2);
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 52, 161, 0.3);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        /* ─────────────────────────────────────────
-           CONTACT INFO
-           ───────────────────────────────────────── */
-        .contact-info {
-            animation: fadeInUp 0.8s ease 0.3s both;
-        }
-
-        .info-card {
-            background: var(--dark-bg);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin-bottom: 24px;
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-4px);
-        }
-
-        .info-icon {
-            font-size: 28px;
-            margin-bottom: 12px;
-        }
-
-        .info-card h3 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .info-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .info-card a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .info-card a:hover {
-            color: var(--primary-dark);
-        }
-
-        /* ─────────────────────────────────────────
-           RESPONSE TIME
-           ───────────────────────────────────────── */
-        .response-notice {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(0, 180, 216, 0.05) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 24px;
-            animation: fadeInUp 0.8s ease 0.4s both;
-        }
-
-        .response-notice p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        .response-notice strong {
-            color: var(--success-color);
-        }
-
-        /* ─────────────────────────────────────────
-           MESSAGE STATUS
-           ───────────────────────────────────────── */
-        .message-status {
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            font-size: 14px;
-            display: none;
-            animation: slideDown 0.3s ease;
-        }
-
-        .message-status.success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
-            display: block;
-        }
-
-        .message-status.error {
-            background: rgba(255, 107, 107, 0.1);
-            border: 1px solid var(--accent-color);
-            color: var(--accent-color);
-            display: block;
-        }
-
-        /* ─────────────────────────────────────────
-           FAQ SECTION
-           ───────────────────────────────────────── */
-        .faq-section {
-            padding: 100px 40px;
-            background: var(--light-bg);
-            margin-top: 60px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-            animation: fadeInUp 0.8s ease 0.3s both;
-        }
-
-        .section-header h2 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 40px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .section-header p {
-            font-size: 16px;
-            color: var(--text-secondary);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .faq-grid {
-            max-width: 900px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .faq-item {
-            background: var(--dark-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            overflow: hidden;
-            animation: fadeInUp 0.8s ease both;
-            transition: all 0.3s ease;
-        }
-
-        .faq-item:nth-child(1) { animation-delay: 0.3s; }
-        .faq-item:nth-child(2) { animation-delay: 0.4s; }
-        .faq-item:nth-child(3) { animation-delay: 0.5s; }
-        .faq-item:nth-child(4) { animation-delay: 0.6s; }
-
-        .faq-item:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-color);
-        }
-
-        .faq-question {
-            padding: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--dark-bg);
-            transition: all 0.3s ease;
-        }
-
-        .faq-question:hover {
-            background: linear-gradient(135deg, rgba(0, 52, 161, 0.02) 0%, rgba(0, 180, 216, 0.02) 100%);
-        }
-
-        .faq-toggle {
-            font-size: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .faq-item.active .faq-toggle {
-            transform: rotate(180deg);
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            padding: 0 20px;
-        }
-
-        .faq-item.active .faq-answer {
-            max-height: 200px;
-            padding: 0 20px 20px 20px;
-        }
-
-        .faq-answer p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        /* ─────────────────────────────────────────
-           FOOTER
-           ───────────────────────────────────────── */
-        footer {
-            background: var(--text-primary);
-            color: white;
-            padding: 40px;
-            text-align: center;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        /* ─────────────────────────────────────────
-           ANIMATIONS
-           ───────────────────────────────────────── */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ─────────────────────────────────────────
-           RESPONSIVE
-           ───────────────────────────────────────── */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 14px 20px;
-            }
-
-            .nav-links {
-                gap: 20px;
-            }
-
-            .hero {
-                padding-top: 100px;
-                padding-bottom: 60px;
-            }
-
-            .hero h1 {
-                font-size: 36px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .contact-section {
-                padding: 60px 20px;
-            }
-
-            .contact-container {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .faq-section {
-                padding: 60px 20px;
-            }
-
-            .faq-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-header h2 {
-                font-size: 32px;
-            }
-        }
-    </style>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VAARTHA | Contact</title>
+	<meta name="description" content="Contact VAARTHA fake news AI detector team.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--surface: #ffffff;
+			--surface-soft: #eef3fb;
+			--text: #0f172a;
+			--muted: #5b6b82;
+			--line: #d8e1ef;
+			--primary: #0a3b82;
+			--primary-2: #1555b2;
+			--accent: #0f9d8e;
+			--radius-lg: 18px;
+			--radius-md: 12px;
+			--shadow: 0 18px 40px rgba(10, 59, 130, 0.09);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Plus Jakarta Sans", Arial, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at right top, rgba(21, 85, 178, 0.12), transparent 34%),
+				radial-gradient(circle at left top, rgba(15, 157, 142, 0.08), transparent 36%),
+				var(--bg);
+		}
+
+		.container {
+			width: min(1160px, calc(100% - 30px));
+			margin: 0 auto;
+			padding: 18px 0 34px;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			padding: 14px 18px;
+			box-shadow: var(--shadow);
+		}
+
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			color: var(--text);
+			text-decoration: none;
+		}
+
+		.brand-mark {
+			width: 42px;
+			height: 42px;
+			border-radius: 12px;
+			display: grid;
+			place-items: center;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			letter-spacing: 0.04em;
+		}
+
+		.brand strong,
+		.brand small { display: block; }
+
+		.brand strong { letter-spacing: 0.12em; font-size: 0.95rem; }
+
+		.brand small { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+
+		.nav {
+			display: flex;
+			gap: 14px;
+			flex-wrap: wrap;
+		}
+
+		.nav a {
+			text-decoration: none;
+			color: var(--muted);
+			font-weight: 600;
+			font-size: 0.93rem;
+		}
+
+		.nav a:hover,
+		.nav a.active { color: var(--primary); }
+
+		.hero {
+			margin-top: 18px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow);
+			padding: 34px;
+		}
+
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.13em;
+			font-size: 0.74rem;
+			color: var(--primary);
+			font-weight: 800;
+		}
+
+		.eyebrow::before {
+			content: "";
+			width: 36px;
+			height: 2px;
+			border-radius: 999px;
+			background: linear-gradient(90deg, var(--primary), var(--accent));
+		}
+
+		h1 {
+			margin: 12px 0 12px;
+			font-size: clamp(1.9rem, 4vw, 3.2rem);
+			line-height: 1;
+			letter-spacing: -0.03em;
+		}
+
+		.hero p {
+			margin: 0;
+			color: var(--muted);
+			max-width: 72ch;
+			line-height: 1.7;
+		}
+
+		.layout {
+			margin-top: 16px;
+			display: grid;
+			grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+			gap: 12px;
+		}
+
+		.card {
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow);
+			padding: 18px;
+		}
+
+		.card h2 {
+			margin: 0 0 8px;
+			font-size: 1rem;
+		}
+
+		.card p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.65;
+			font-size: 0.92rem;
+		}
+
+		form {
+			display: grid;
+			gap: 10px;
+			margin-top: 10px;
+		}
+
+		label {
+			font-weight: 700;
+			font-size: 0.9rem;
+			color: #1f2937;
+		}
+
+		input,
+		textarea {
+			width: 100%;
+			border: 1px solid #ccdaee;
+			border-radius: 10px;
+			background: #fff;
+			color: var(--text);
+			padding: 11px 12px;
+			font: inherit;
+			outline: none;
+		}
+
+		textarea {
+			min-height: 140px;
+			resize: vertical;
+			line-height: 1.5;
+		}
+
+		input:focus,
+		textarea:focus {
+			border-color: var(--primary-2);
+			box-shadow: 0 0 0 4px rgba(21, 85, 178, 0.12);
+		}
+
+		.btn {
+			border: 0;
+			border-radius: 999px;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			color: #fff;
+			text-decoration: none;
+			padding: 10px 16px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			width: fit-content;
+		}
+
+		.status {
+			margin-top: 12px;
+			border: 1px solid #dbe6f7;
+			background: var(--surface-soft);
+			border-radius: 10px;
+			padding: 10px;
+			color: var(--muted);
+			font-size: 0.9rem;
+			line-height: 1.5;
+		}
+
+		.quick-links {
+			margin-top: 10px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+
+		.quick-links a {
+			text-decoration: none;
+			border: 1px solid #ccdef8;
+			background: #e7f0fd;
+			color: var(--primary);
+			border-radius: 999px;
+			padding: 7px 11px;
+			font-size: 0.82rem;
+			font-weight: 700;
+		}
+
+		footer {
+			margin-top: 18px;
+			text-align: center;
+			color: var(--muted);
+			font-size: 0.87rem;
+			padding: 2px 0 8px;
+		}
+
+		@media (max-width: 980px) {
+			.layout { grid-template-columns: 1fr; }
+		}
+
+		@media (max-width: 700px) {
+			.topbar { flex-direction: column; align-items: flex-start; }
+			.hero { padding: 22px; }
+			.container { width: min(100% - 18px, 1160px); }
+		}
+	</style>
 </head>
-
 <body>
-    <nav class="nav">
-        <div class="nav-logo">VAARTHA</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/services">Services</a>
-            <a href="/contact">Contact</a>
-        </div>
-    </nav>
+	<div class="container">
+		<header class="topbar">
+			<a class="brand" href="/">
+				<span class="brand-mark">V</span>
+				<span>
+					<strong>VAARTHA</strong>
+					<small>AI-Powered Fake News Detector</small>
+				</span>
+			</a>
+			<nav class="nav">
+				<a href="/">Home</a>
+				<a href="/about">About</a>
+				<a href="/services">Services</a>
+				<a class="active" href="/contact">Contact</a>
+			</nav>
+		</header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-badge">Get in Touch</div>
-            <h1>We'd Love to Hear From You</h1>
-            <p>Have questions about VAARTHA? Want to partner with us? Get in touch with our team. We respond to all inquiries within 24 hours.</p>
-        </div>
-    </section>
+		<section class="hero">
+			<span class="eyebrow">Contact</span>
+			<h1>Talk to the VAARTHA team.</h1>
+			<p>
+				Share feedback, partnership ideas, or product suggestions. We built this platform for practical use, and your input helps improve it.
+			</p>
+		</section>
 
-    <section class="contact-section">
-        <div class="contact-container">
-            <div class="contact-form">
-                <div class="message-status" id="messageStatus"></div>
+		<section class="layout">
+			<article class="card">
+				<h2>Send a Message</h2>
+				<p>Use this form and we will acknowledge your message instantly.</p>
 
-                <form id="contactForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Full Name *</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email Address *</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                    </div>
+				<form id="contact-form" action="/submit_contact" method="post">
+					<label for="name">Name</label>
+					<input id="name" name="name" type="text" placeholder="Enter your name" required>
 
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
+					<label for="message">Message</label>
+					<textarea id="message" name="message" placeholder="Write your message" required></textarea>
 
-                    <div class="form-group">
-                        <label for="subject">Subject *</label>
-                        <input type="text" id="subject" name="subject" required>
-                    </div>
+					<button class="btn" type="submit">Send Message</button>
+				</form>
 
-                    <div class="form-group">
-                        <label for="message">Message *</label>
-                        <textarea id="message" name="message" required></textarea>
-                    </div>
+				<div id="status" class="status">Your message status will appear here.</div>
+			</article>
 
-                    <button type="submit" class="submit-btn">Send Message</button>
-                </form>
+			<article class="card">
+				<h2>Quick Access</h2>
+				<p>Navigate directly to key pages in the platform.</p>
+				<div class="quick-links">
+					<a href="/">Detector</a>
+					<a href="/about">About</a>
+					<a href="/services">Services</a>
+					<a href="/">↺ Refresh Home</a>
+				</div>
+			</article>
+		</section>
 
-                <div class="response-notice">
-                    <p><strong>⏱️ Response Time:</strong> We typically respond within 24 hours during business days.</p>
-                </div>
-            </div>
+		<footer>
+			VAARTHA Fake News AI Detector
+		</footer>
+	</div>
 
-            <div class="contact-info">
-                <div class="info-card">
-                    <div class="info-icon">📧</div>
-                    <h3>Email</h3>
-                    <p>For general inquiries and support: <a href="mailto:info@vaartha.com">info@vaartha.com</a></p>
-                </div>
+	<script>
+		(function () {
+			var form = document.getElementById('contact-form');
+			var statusBox = document.getElementById('status');
+			if (!form || !statusBox) {
+				return;
+			}
 
-                <div class="info-card">
-                    <div class="info-icon">📞</div>
-                    <h3>Phone</h3>
-                    <p>Call us during business hours: <a href="tel:+91-9704720678">+91-9704720678</a></p>
-                </div>
+			form.addEventListener('submit', function (event) {
+				event.preventDefault();
+				statusBox.textContent = 'Sending message...';
 
-                <div class="info-card">
-                    <div class="info-icon">📍</div>
-                    <h3>Office Location</h3>
-                    <p>4-190/2/2 phase 3 Bhaskar Rao nagar colony<br>Sainikpuri Hyderabad<br>India</p>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-icon">🕐</div>
-                    <h3>Business Hours</h3>
-                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday - Sunday: Closed<br>Timezone: IST</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="faq-section">
-        <div class="section-header">
-            <h2>Frequently Asked Questions</h2>
-            <p>Find answers to common questions about VAARTHA</p>
-        </div>
-
-        <div class="faq-grid">
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>How accurate is VAARTHA?</span>
-                    <span class="faq-toggle">▼</span>
-                </div>
-                <div class="faq-answer">
-                    <p>VAARTHA achieves high accuracy rates in detecting fake and real news. Our ML model is trained on thousands of verified news sources and continuously improves with new data.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>Is VAARTHA free to use?</span>
-                    <span class="faq-toggle">▼</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Yes, VAARTHA is completely free to use. We believe in making misinformation detection accessible to everyone without paywalls or subscription fees.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>How do I integrate VAARTHA's API?</span>
-                    <span class="faq-toggle">▼</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Our comprehensive API documentation is available to all developers. You can find integration guides, code samples, and support resources in our developer portal.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>What languages does VAARTHA support?</span>
-                    <span class="faq-toggle">▼</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Currently, VAARTHA supports English language news detection. We are actively developing support for multiple languages and will expand soon.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 VAARTHA. All rights reserved. Combating misinformation with AI.</p>
-    </footer>
-
-    <script>
-        // Form submission handler connected to Flask backend
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const statusEl = document.getElementById('messageStatus');
-            const submitBtn = document.querySelector('.submit-btn');
-            
-            // Change button state
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
-            const formData = new FormData(this);
-            
-            fetch('/submit_contact', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                statusEl.className = 'message-status success';
-                statusEl.textContent = '✓ Message sent successfully! We\'ll get back to you soon.';
-                this.reset();
-            })
-            .catch(error => {
-                statusEl.className = 'message-status error';
-                statusEl.textContent = '❌ Failed to send message. Please try again.';
-                console.error('Error:', error);
-            })
-            .finally(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Send Message';
-                
-                setTimeout(() => {
-                    statusEl.className = 'message-status';
-                }, 5000);
-            });
-        });
-
-        // FAQ toggle functionality
-        function toggleFAQ(element) {
-            const faqItem = element.parentElement;
-            faqItem.classList.toggle('active');
-        }
-    </script>
+				var body = new FormData(form);
+				fetch('/submit_contact', {
+					method: 'POST',
+					body: body
+				})
+					.then(function (res) { return res.json(); })
+					.then(function (data) {
+						statusBox.textContent = data.message || 'Message sent successfully.';
+						form.reset();
+					})
+					.catch(function () {
+						statusBox.textContent = 'Could not send message right now. Please try again.';
+					});
+			});
+		})();
+	</script>
 </body>
 </html>
