@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VAARTHA | Services</title>
+	<meta name="description" content="Services offered by VAARTHA fake news AI detector.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--surface: #ffffff;
+			--surface-soft: #eef3fb;
+			--text: #0f172a;
+			--muted: #5b6b82;
+			--line: #d8e1ef;
+			--primary: #0a3b82;
+			--primary-2: #1555b2;
+			--accent: #0f9d8e;
+			--radius-lg: 18px;
+			--radius-md: 12px;
+			--shadow: 0 18px 40px rgba(10, 59, 130, 0.09);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Plus Jakarta Sans", Arial, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at right top, rgba(21, 85, 178, 0.12), transparent 34%),
+				radial-gradient(circle at left top, rgba(15, 157, 142, 0.08), transparent 36%),
+				var(--bg);
+		}
+
+		.container {
+			width: min(1160px, calc(100% - 30px));
+			margin: 0 auto;
+			padding: 18px 0 34px;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			padding: 14px 18px;
+			box-shadow: var(--shadow);
+		}
+
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			color: var(--text);
+			text-decoration: none;
+		}
+
+		.brand-mark {
+			width: 42px;
+			height: 42px;
+			border-radius: 12px;
+			display: grid;
+			place-items: center;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			letter-spacing: 0.04em;
+		}
+
+		.brand strong,
+		.brand small { display: block; }
+
+		.brand strong { letter-spacing: 0.12em; font-size: 0.95rem; }
+
+		.brand small { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+
+		.nav {
+			display: flex;
+			gap: 14px;
+			flex-wrap: wrap;
+		}
+
+		.nav a {
+			text-decoration: none;
+			color: var(--muted);
+			font-weight: 600;
+			font-size: 0.93rem;
+		}
+
+		.nav a:hover,
+		.nav a.active { color: var(--primary); }
+
+		.hero {
+			margin-top: 18px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow);
+			padding: 34px;
+		}
+
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.13em;
+			font-size: 0.74rem;
+			color: var(--primary);
+			font-weight: 800;
+		}
+
+		.eyebrow::before {
+			content: "";
+			width: 36px;
+			height: 2px;
+			border-radius: 999px;
+			background: linear-gradient(90deg, var(--primary), var(--accent));
+		}
+
+		h1 {
+			margin: 12px 0 12px;
+			font-size: clamp(1.9rem, 4vw, 3.2rem);
+			line-height: 1;
+			letter-spacing: -0.03em;
+		}
+
+		.hero p {
+			margin: 0;
+			color: var(--muted);
+			max-width: 72ch;
+			line-height: 1.7;
+		}
+
+		.grid {
+			margin-top: 16px;
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+		}
+
+		.card {
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow);
+			padding: 18px;
+		}
+
+		.card h2 {
+			margin: 0 0 8px;
+			font-size: 1rem;
+		}
+
+		.card p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.65;
+			font-size: 0.92rem;
+		}
+
+		.flow {
+			margin-top: 16px;
+			background: var(--surface-soft);
+			border: 1px solid #dbe6f7;
+			border-radius: var(--radius-md);
+			padding: 16px;
+		}
+
+		.flow h3 {
+			margin: 0 0 10px;
+			font-size: 1rem;
+		}
+
+		.flow-list {
+			margin: 0;
+			padding-left: 18px;
+			color: var(--muted);
+			line-height: 1.8;
+			font-size: 0.92rem;
+		}
+
+		.cta {
+			margin-top: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			flex-wrap: wrap;
+		}
+
+		.btn {
+			border: 0;
+			border-radius: 999px;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			color: #fff;
+			text-decoration: none;
+			padding: 10px 16px;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		footer {
+			margin-top: 18px;
+			text-align: center;
+			color: var(--muted);
+			font-size: 0.87rem;
+			padding: 2px 0 8px;
+		}
+
+		@media (max-width: 980px) {
+			.grid { grid-template-columns: 1fr; }
+		}
+
+		@media (max-width: 700px) {
+			.topbar { flex-direction: column; align-items: flex-start; }
+			.hero { padding: 22px; }
+			.container { width: min(100% - 18px, 1160px); }
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header class="topbar">
+			<a class="brand" href="/">
+				<span class="brand-mark">V</span>
+				<span>
+					<strong>VAARTHA</strong>
+					<small>AI-Powered Fake News Detector</small>
+				</span>
+			</a>
+			<nav class="nav">
+				<a href="/">Home</a>
+				<a href="/about">About</a>
+				<a class="active" href="/services">Services</a>
+				<a href="/contact">Contact</a>
+			</nav>
+		</header>
+
+		<section class="hero">
+			<span class="eyebrow">Services</span>
+			<h1>Practical fake news detection services for daily operations.</h1>
+			<p>
+				VAARTHA provides a simple service stack focused on fast verification and user clarity. Each component is designed to support real-world decision making with minimal complexity.
+			</p>
+		</section>
+
+		<section class="grid">
+			<article class="card">
+				<h2>News Text Analysis</h2>
+				<p>Submit article text directly and receive a verdict as Real, Fake, or Misleading within seconds.</p>
+			</article>
+			<article class="card">
+				<h2>File-Based Verification</h2>
+				<p>Upload .txt files for quick content checks when users work with documents instead of copy-paste input.</p>
+			</article>
+			<article class="card">
+				<h2>Operational Fallback</h2>
+				<p>If external API quota is unavailable, the platform still delivers results using local model logic.</p>
+			</article>
+		</section>
+
+		<section class="flow">
+			<h3>Service Flow</h3>
+			<ol class="flow-list">
+				<li>User submits text or file.</li>
+				<li>Content is sanitized and evaluated.</li>
+				<li>System returns Real, Fake, or Misleading verdict.</li>
+				<li>User reviews reasoning and acts accordingly.</li>
+			</ol>
+			<div class="cta">
+				<span style="color: var(--muted);">Start a new analysis from the main detector page.</span>
+				<a class="btn" href="/">↺ Refresh Home</a>
+			</div>
+		</section>
+
+		<footer>
+			VAARTHA Fake News AI Detector
+		</footer>
+	</div>
+</body>
+</html>
