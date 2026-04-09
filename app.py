@@ -207,9 +207,11 @@ def api_latest_news():
 @app.get("/api/health")
 @app.get("/health")
 def health():
+	model_state = "ready" if EMBEDDER not in (None, False) else ("not-loaded" if EMBEDDER is None else "unavailable")
 	return jsonify({
 		"ok": True,
-		"model_loaded": bool(get_embedder()),
+		"model_loaded": EMBEDDER not in (None, False),
+		"model_state": model_state,
 		"time": now_utc().isoformat(),
 	})
 
