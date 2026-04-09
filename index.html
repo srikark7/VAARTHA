@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VAARTHA | Fake News AI Detector</title>
+	<meta name="description" content="VAARTHA helps teams detect fake, real, or misleading news with a clear and modern workflow.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--surface: #ffffff;
+			--surface-soft: #eef3fb;
+			--text: #0f172a;
+			--muted: #5b6b82;
+			--line: #d8e1ef;
+			--primary: #0a3b82;
+			--primary-2: #1555b2;
+			--accent: #0f9d8e;
+			--ok: #0f9d58;
+			--warn: #d97706;
+			--danger: #dc2626;
+			--radius-lg: 18px;
+			--radius-md: 12px;
+			--shadow: 0 18px 40px rgba(10, 59, 130, 0.09);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Plus Jakarta Sans", Arial, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at right top, rgba(21, 85, 178, 0.12), transparent 34%),
+				radial-gradient(circle at left top, rgba(15, 157, 142, 0.08), transparent 36%),
+				var(--bg);
+		}
+
+		.container {
+			width: min(1160px, calc(100% - 30px));
+			margin: 0 auto;
+			padding: 18px 0 34px;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			padding: 14px 18px;
+			box-shadow: var(--shadow);
+		}
+
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			color: var(--text);
+			text-decoration: none;
+		}
+
+		.brand-mark {
+			width: 42px;
+			height: 42px;
+			border-radius: 12px;
+			display: grid;
+			place-items: center;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			letter-spacing: 0.04em;
+		}
+
+		.brand strong,
+		.brand small {
+			display: block;
+		}
+
+		.brand strong {
+			letter-spacing: 0.12em;
+			font-size: 0.95rem;
+		}
+
+		.brand small {
+			color: var(--muted);
+			font-size: 0.82rem;
+			margin-top: 2px;
+		}
+
+		.nav {
+			display: flex;
+			gap: 14px;
+			flex-wrap: wrap;
+		}
+
+		.nav a {
+			text-decoration: none;
+			color: var(--muted);
+			font-weight: 600;
+			font-size: 0.93rem;
+		}
+
+		.nav a:hover {
+			color: var(--primary);
+		}
+
+		.hero {
+			margin-top: 18px;
+			display: grid;
+			grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+			gap: 18px;
+		}
+
+		.card {
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow);
+		}
+
+		.hero-copy {
+			padding: 34px;
+		}
+
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.13em;
+			font-size: 0.74rem;
+			color: var(--primary);
+			font-weight: 800;
+		}
+
+		.eyebrow::before {
+			content: "";
+			width: 36px;
+			height: 2px;
+			border-radius: 999px;
+			background: linear-gradient(90deg, var(--primary), var(--accent));
+		}
+
+		.hero-copy h1 {
+			margin: 12px 0 14px;
+			font-size: clamp(2rem, 4vw, 3.7rem);
+			line-height: 0.98;
+			letter-spacing: -0.03em;
+		}
+
+		.hero-copy p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.7;
+			max-width: 64ch;
+		}
+
+		.stat-grid {
+			margin-top: 24px;
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 10px;
+		}
+
+		.stat {
+			background: var(--surface-soft);
+			border: 1px solid #dbe6f7;
+			border-radius: var(--radius-md);
+			padding: 12px;
+		}
+
+		.stat strong,
+		.stat span {
+			display: block;
+		}
+
+		.stat strong {
+			color: var(--primary);
+			font-size: 1.02rem;
+		}
+
+		.stat span {
+			margin-top: 5px;
+			color: var(--muted);
+			font-size: 0.85rem;
+		}
+
+		.analyzer {
+			padding: 24px;
+		}
+
+		.analyzer h2 {
+			margin: 0;
+			font-size: 1.15rem;
+		}
+
+		.analyzer p {
+			margin: 8px 0 16px;
+			color: var(--muted);
+			font-size: 0.92rem;
+			line-height: 1.6;
+		}
+
+		form {
+			display: grid;
+			gap: 10px;
+		}
+
+		label {
+			font-weight: 700;
+			font-size: 0.9rem;
+			color: #1f2937;
+		}
+
+		textarea,
+		input[type="file"] {
+			width: 100%;
+			border: 1px solid #ccdaee;
+			border-radius: 10px;
+			background: #fff;
+			color: var(--text);
+			padding: 12px;
+			font: inherit;
+			outline: none;
+		}
+
+		textarea {
+			min-height: 220px;
+			resize: vertical;
+			line-height: 1.5;
+		}
+
+		textarea:focus,
+		input[type="file"]:focus {
+			border-color: var(--primary-2);
+			box-shadow: 0 0 0 4px rgba(21, 85, 178, 0.12);
+		}
+
+		.chips {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+
+		.chip {
+			border: 1px solid #cfe0f8;
+			background: #edf4ff;
+			color: var(--primary);
+			border-radius: 999px;
+			padding: 7px 11px;
+			font-size: 0.8rem;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.chip:hover {
+			background: #e4efff;
+		}
+
+		.actions {
+			margin-top: 4px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.btn {
+			border: 0;
+			border-radius: 999px;
+			padding: 11px 18px;
+			font: inherit;
+			font-weight: 800;
+			text-decoration: none;
+			cursor: pointer;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.btn-primary {
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+		}
+
+		.btn-soft {
+			color: var(--primary);
+			background: #e7f0fd;
+			border: 1px solid #ccdef8;
+		}
+
+		.info {
+			margin-top: 18px;
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+		}
+
+		.info-card {
+			padding: 18px;
+		}
+
+		.info-card h3 {
+			margin: 0 0 8px;
+			font-size: 1rem;
+		}
+
+		.info-card p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.6;
+			font-size: 0.9rem;
+		}
+
+		.tag-row {
+			margin-top: 14px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+
+		.tag {
+			border-radius: 999px;
+			font-size: 0.78rem;
+			font-weight: 700;
+			padding: 6px 10px;
+			color: #fff;
+		}
+
+		.tag.real {
+			background: var(--ok);
+		}
+
+		.tag.fake {
+			background: var(--danger);
+		}
+
+		.tag.misleading {
+			background: var(--warn);
+		}
+
+		footer {
+			margin-top: 18px;
+			text-align: center;
+			color: var(--muted);
+			font-size: 0.87rem;
+			padding: 2px 0 8px;
+		}
+
+		@media (max-width: 980px) {
+			.hero,
+			.info {
+				grid-template-columns: 1fr;
+			}
+
+			.stat-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@media (max-width: 700px) {
+			.topbar {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			.hero-copy,
+			.analyzer {
+				padding: 22px;
+			}
+
+			.container {
+				width: min(100% - 18px, 1160px);
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header class="topbar">
+			<a class="brand" href="/">
+				<span class="brand-mark">V</span>
+				<span>
+					<strong>VAARTHA</strong>
+					<small>AI-Powered Fake News Detector</small>
+				</span>
+			</a>
+			<nav class="nav">
+				<a href="/">Home</a>
+				<a href="/services">Services</a>
+				<a href="/about">About</a>
+				<a href="/contact">Contact</a>
+			</nav>
+		</header>
+
+		<section class="hero">
+			<article class="card hero-copy">
+				<span class="eyebrow">Company Detection Suite</span>
+				<h1>Build trust by verifying news before it spreads.</h1>
+				<p>
+					VAARTHA is designed for teams that need quick and clear decisions. Submit any claim or article, then get a structured verdict: Real, Fake, or Misleading.
+				</p>
+
+				<div class="stat-grid">
+					<div class="stat">
+						<strong>Tri-State Verdict</strong>
+						<span>Real, Fake, Misleading</span>
+					</div>
+					<div class="stat">
+						<strong>Text + File Input</strong>
+						<span>Paste or upload .txt</span>
+					</div>
+					<div class="stat">
+						<strong>Production Friendly</strong>
+						<span>Simple and reliable workflow</span>
+					</div>
+				</div>
+
+				<div class="tag-row">
+					<span class="tag real">Real</span>
+					<span class="tag fake">Fake</span>
+					<span class="tag misleading">Misleading</span>
+				</div>
+			</article>
+
+			<article class="card analyzer">
+				<h2>Analyze News</h2>
+				<p>Paste the content below and run the detector.</p>
+
+				<form action="/result" method="post" enctype="multipart/form-data">
+					<label for="news">News Text</label>
+					<textarea id="news" name="news" maxlength="25000" placeholder="Paste headline or full article text here..."></textarea>
+
+					<div class="chips">
+						<button class="chip" type="button" data-sample="A viral message claims that a major political leader has passed away, but no official source confirms it.">Sample 1</button>
+						<button class="chip" type="button" data-sample="The ministry released the annual education budget and shared the official report on its website.">Sample 2</button>
+						<button class="chip" type="button" data-sample="In my opinion, this policy is dangerous and media channels are hiding the truth.">Sample 3</button>
+					</div>
+
+					<label for="file">Upload .txt (optional)</label>
+					<input id="file" name="file" type="file" accept=".txt,text/plain">
+
+					<div class="actions">
+						<button class="btn btn-primary" type="submit">Run Detector</button>
+						<a class="btn btn-soft" href="/services">How it works</a>
+					</div>
+				</form>
+			</article>
+		</section>
+
+		<section class="info">
+			<article class="card info-card">
+				<h3>Clear Verdicts</h3>
+				<p>Users get understandable output that supports confident decisions in day-to-day operations.</p>
+			</article>
+			<article class="card info-card">
+				<h3>Fast Workflow</h3>
+				<p>Single-screen input and analysis experience keeps the platform easy for non-technical users.</p>
+			</article>
+			<article class="card info-card">
+				<h3>Reliable Fallback</h3>
+				<p>If API quota is unavailable, the system continues with local detection so work does not stop.</p>
+			</article>
+		</section>
+
+		<footer>
+			VAARTHA Fake News AI Detector
+		</footer>
+	</div>
+
+	<script>
+		// Clear form on page load
+		window.addEventListener('load', () => {
+			var form = document.querySelector('form');
+			if (form) {
+				form.reset();
+			}
+			var newsField = document.getElementById('news');
+			if (newsField) {
+				newsField.focus();
+			}
+		});
+
+		// Handle chip clicks (sample data insertion)
+		document.querySelectorAll('.chip').forEach((chip) => {
+			chip.addEventListener('click', () => {
+				var text = chip.getAttribute('data-sample') || '';
+				var field = document.getElementById('news');
+				if (field) {
+					field.value = text;
+					field.focus();
+				}
+			});
+		});
+
+		// Submit form on Enter key in textarea
+		var newsField = document.getElementById('news');
+		if (newsField) {
+			newsField.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') {
+						e.preventDefault();
+					var form = document.querySelector('form');
+					if (form) {
+						form.submit();
+					}
+				}
+			});
+		}
+	</script>
+</body>
+</html>
