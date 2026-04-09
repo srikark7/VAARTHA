@@ -1,488 +1,450 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detection Result - VAARTHA</title>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VAARTHA | Result</title>
+	<meta name="description" content="Result page for VAARTHA fake news AI detector.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--surface: #ffffff;
+			--surface-soft: #eef3fb;
+			--text: #0f172a;
+			--muted: #5b6b82;
+			--line: #d8e1ef;
+			--primary: #0a3b82;
+			--primary-2: #1555b2;
+			--accent: #0f9d8e;
+			--ok: #0f9d58;
+			--warn: #d97706;
+			--danger: #dc2626;
+			--radius-lg: 18px;
+			--radius-md: 12px;
+			--shadow: 0 18px 40px rgba(10, 59, 130, 0.09);
+		}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+		* { box-sizing: border-box; }
 
-        :root {
-            --primary-color: #0052CC;
-            --primary-dark: #003DA1;
-            --secondary-color: #00B4D8;
-            --accent-color: #FF6B6B;
-            --success-color: #10B981;
-            --warning-color: #F59E0B;
-            --light-bg: #F8FAFC;
-            --dark-bg: #FFFFFF;
-            --text-primary: #1A202C;
-            --text-secondary: #4A5568;
-            --text-tertiary: #718096;
-            --border-color: #E2E8F0;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-            --shadow-md: 0 8px 24px rgba(0, 52, 161, 0.12);
-            --shadow-lg: 0 16px 48px rgba(0, 52, 161, 0.15);
-        }
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Plus Jakarta Sans", Arial, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at right top, rgba(21, 85, 178, 0.12), transparent 34%),
+				radial-gradient(circle at left top, rgba(15, 157, 142, 0.08), transparent 36%),
+				var(--bg);
+		}
 
-        html {
-            scroll-behavior: smooth;
-        }
+		.container {
+			width: min(1160px, calc(100% - 30px));
+			margin: 0 auto;
+			padding: 18px 0 34px;
+		}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--light-bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			padding: 14px 18px;
+			box-shadow: var(--shadow);
+		}
 
-        /* ─────────────────────────────────────────
-           NAVBAR
-           ───────────────────────────────────────── */
-        .nav {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            padding: 16px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            z-index: 1000;
-        }
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			color: var(--text);
+			text-decoration: none;
+		}
 
-        .nav-logo {
-            font-family: 'Poppins', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.5px;
-        }
+		.brand-mark {
+			width: 42px;
+			height: 42px;
+			border-radius: 12px;
+			display: grid;
+			place-items: center;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			letter-spacing: 0.04em;
+		}
 
-        .nav-links {
-            display: flex;
-            gap: 40px;
-        }
+		.brand strong,
+		.brand small { display: block; }
 
-        .nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+		.brand strong { letter-spacing: 0.12em; font-size: 0.95rem; }
 
-        .nav a:after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            transition: width 0.3s ease;
-        }
+		.brand small { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
 
-        .nav a:hover {
-            color: var(--primary-color);
-        }
+		.nav {
+			display: flex;
+			gap: 14px;
+			flex-wrap: wrap;
+		}
 
-        .nav a:hover:after {
-            width: 100%;
-        }
+		.nav a {
+			text-decoration: none;
+			color: var(--muted);
+			font-weight: 600;
+			font-size: 0.93rem;
+		}
 
-        /* ─────────────────────────────────────────
-           RESULT CONTAINER
-           ───────────────────────────────────────── */
-        .container {
-            padding-top: 140px;
-            padding-bottom: 80px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+		.nav a:hover { color: var(--primary); }
 
-        .result-box {
-            background: var(--dark-bg);
-            padding: 60px 40px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 700px;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border-color);
-            animation: slideIn 0.6s ease;
-        }
+		.hero {
+			margin-top: 18px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow);
+			padding: 24px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
 
-        /* ─────────────────────────────────────────
-           RESULT TITLE
-           ───────────────────────────────────────── */
-        .result-box h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 40px;
-            color: var(--text-primary);
-        }
+		.meta {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
 
-        /* ─────────────────────────────────────────
-           RESULT STATUS
-           ───────────────────────────────────────── */
-        .result-status {
-            margin-bottom: 40px;
-        }
+		.hero h1 {
+			margin: 6px 0;
+			font-size: clamp(2rem, 4vw, 3.2rem);
+			line-height: 1;
+			letter-spacing: -0.03em;
+		}
 
-        .result-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            animation: scaleIn 0.6s ease 0.2s both;
-        }
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.13em;
+			font-size: 0.74rem;
+			color: var(--primary);
+			font-weight: 800;
+		}
 
-        .result-text {
-            font-family: 'Poppins', sans-serif;
-            font-size: 42px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            animation: fadeInUp 0.8s ease 0.3s both;
-            letter-spacing: -0.5px;
-        }
+		.eyebrow::before {
+			content: "";
+			width: 36px;
+			height: 2px;
+			border-radius: 999px;
+			background: linear-gradient(90deg, var(--primary), var(--accent));
+		}
 
-        .result-text.real {
-            color: var(--success-color);
-        }
+		.score {
+			width: 155px;
+			height: 155px;
+			border-radius: 50%;
+			display: grid;
+			place-items: center;
+			text-align: center;
+			border: 9px solid #dce7f7;
+			background: var(--surface-soft);
+			flex-shrink: 0;
+		}
 
-        .result-text.fake {
-            color: var(--accent-color);
-        }
+		.score strong {
+			display: block;
+			font-size: 2rem;
+			line-height: 1;
+		}
 
-        .result-text.misleading {
-            color: var(--warning-color);
-        }
+		.score span {
+			display: block;
+			margin-top: 6px;
+			color: var(--muted);
+			font-size: 0.78rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
 
-        .result-description {
-            font-size: 16px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            animation: fadeInUp 0.8s ease 0.4s both;
-        }
+		.score.real,
+		.badge.real {
+			border-color: rgba(15, 157, 88, 0.35);
+			color: var(--ok);
+		}
 
-        .ai-reasoning {
-            margin-top: 15px;
-            padding: 15px;
-            background-color: var(--light-bg);
-            border-left: 4px solid var(--primary-color);
-            border-radius: 4px;
-            font-style: italic;
-            font-size: 15px;
-            color: var(--text-primary);
-        }
+		.score.fake,
+		.badge.fake {
+			border-color: rgba(220, 38, 38, 0.35);
+			color: var(--danger);
+		}
 
-        /* ─────────────────────────────────────────
-           CONFIDENCE BADGE
-           ───────────────────────────────────────── */
-        .confidence-badge {
-            display: inline-block;
-            padding: 16px 32px;
-            background: linear-gradient(135deg, rgba(0, 52, 161, 0.1), rgba(0, 180, 216, 0.1));
-            border: 2px solid var(--primary-color);
-            border-radius: 12px;
-            margin-bottom: 40px;
-            animation: fadeInUp 0.8s ease 0.5s both;
-        }
+		.score.misleading,
+		.badge.misleading {
+			border-color: rgba(217, 119, 6, 0.35);
+			color: var(--warn);
+		}
 
-        .confidence-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--primary-dark);
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
+		.score.insufficient,
+		.badge.insufficient {
+			border-color: rgba(71, 85, 105, 0.35);
+			color: #475569;
+		}
 
-        .confidence-value {
-            font-family: 'Poppins', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
+		.grid {
+			margin-top: 16px;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 12px;
+		}
 
-        /* ─────────────────────────────────────────
-           ACTION BUTTONS
-           ───────────────────────────────────────── */
-        .action-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease 0.6s both;
-        }
+		.card {
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow);
+			padding: 18px;
+		}
 
-        .btn {
-            padding: 14px 32px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 15px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-            display: inline-block;
-        }
+		.card h2 {
+			margin: 0 0 10px;
+			font-size: 1rem;
+		}
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 52, 161, 0.2);
-        }
+		.card p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.7;
+			font-size: 0.93rem;
+		}
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 52, 161, 0.3);
-        }
+		.evidence-list {
+			margin: 10px 0 0;
+			padding-left: 18px;
+			color: #334155;
+			line-height: 1.6;
+			font-size: 0.9rem;
+		}
 
-        .btn-secondary {
-            background: var(--light-bg);
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
+		.evidence-list li {
+			margin-bottom: 8px;
+		}
 
-        .btn-secondary:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-3px);
-        }
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid currentColor;
+			border-radius: 999px;
+			padding: 6px 10px;
+			font-size: 0.78rem;
+			font-weight: 800;
+			margin-bottom: 10px;
+			background: #fff;
+		}
 
-        /* ─────────────────────────────────────────
-           RESULT INFO
-           ───────────────────────────────────────── */
-        .result-info {
-            background: linear-gradient(135deg, rgba(0, 52, 161, 0.02) 0%, rgba(0, 180, 216, 0.02) 100%);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            margin-top: 40px;
-            text-align: left;
-            animation: fadeInUp 0.8s ease 0.7s both;
-        }
+		.confidence-band {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 999px;
+			padding: 8px 14px;
+			font-size: 0.8rem;
+			font-weight: 800;
+			border: 1px solid #cbd5e1;
+			background: #fff;
+			color: #334155;
+		}
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
+		.confidence-band.high {
+			border-color: rgba(15, 157, 88, 0.35);
+			color: var(--ok);
+		}
 
-        .info-row:last-child {
-            border-bottom: none;
-        }
+		.confidence-band.medium {
+			border-color: rgba(217, 119, 6, 0.35);
+			color: var(--warn);
+		}
 
-        .info-label {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+		.confidence-band.low {
+			border-color: rgba(96, 165, 250, 0.35);
+			color: var(--primary);
+		}
 
-        .info-value {
-            color: var(--text-secondary);
-        }
+		.excerpt {
+			margin-top: 8px;
+			background: var(--surface-soft);
+			border: 1px solid #dbe6f7;
+			border-radius: 10px;
+			padding: 12px;
+			color: #334155;
+			font-size: 0.92rem;
+			line-height: 1.7;
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
 
-        /* ─────────────────────────────────────────
-           FOOTER
-           ───────────────────────────────────────── */
-        footer {
-            background: var(--text-primary);
-            color: white;
-            padding: 40px;
-            text-align: center;
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 80px;
-        }
+		.actions {
+			margin-top: 16px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
 
-        /* ─────────────────────────────────────────
-           ANIMATIONS
-           ───────────────────────────────────────── */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+		.btn {
+			border: 0;
+			border-radius: 999px;
+			padding: 10px 16px;
+			font: inherit;
+			font-weight: 700;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+		.btn-primary {
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+		}
 
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+		.btn-soft {
+			color: var(--primary);
+			background: #e7f0fd;
+			border: 1px solid #ccdef8;
+		}
 
-        /* ─────────────────────────────────────────
-           RESPONSIVE
-           ───────────────────────────────────────── */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 14px 20px;
-            }
+		footer {
+			margin-top: 18px;
+			text-align: center;
+			color: var(--muted);
+			font-size: 0.87rem;
+			padding: 2px 0 8px;
+		}
 
-            .nav-links {
-                gap: 20px;
-            }
+		@media (max-width: 980px) {
+			.grid { grid-template-columns: 1fr; }
+		}
 
-            .container {
-                padding-top: 100px;
-                padding-bottom: 60px;
-            }
-
-            .result-box {
-                padding: 40px 24px;
-            }
-
-            .result-box h1 {
-                font-size: 26px;
-            }
-
-            .result-icon {
-                font-size: 60px;
-            }
-
-            .result-text {
-                font-size: 32px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .result-info {
-                margin-top: 30px;
-            }
-
-            .info-row {
-                flex-direction: column;
-                gap: 8px;
-            }
-        }
-    </style>
+		@media (max-width: 700px) {
+			.topbar { flex-direction: column; align-items: flex-start; }
+			.hero { padding: 20px; }
+			.container { width: min(100% - 18px, 1160px); }
+			.score { width: 130px; height: 130px; }
+			.score strong { font-size: 1.7rem; }
+		}
+	</style>
 </head>
-
 <body>
-    <nav class="nav">
-        <div class="nav-logo">VAARTHA</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/services">Services</a>
-            <a href="/contact">Contact</a>
-        </div>
-    </nav>
+	<div class="container">
+		<header class="topbar">
+			<a class="brand" href="/">
+				<span class="brand-mark">V</span>
+				<span>
+					<strong>VAARTHA</strong>
+					<small>AI-Powered Fake News Detector</small>
+				</span>
+			</a>
+			<nav class="nav">
+				<a href="/">Home</a>
+				<a href="/about">About</a>
+				<a href="/services">Services</a>
+				<a href="/contact">Contact</a>
+			</nav>
+		</header>
 
-    <div class="container">
-        <div class="result-box">
-            <h1>Detection Result</h1>
+		<section class="hero">
+			<div>
+				<span class="eyebrow">Analysis Result</span>
+				<h1>{{ prediction }}</h1>
+				<div class="meta">{{ analysis_date }} · Source: {{ analysis_source|title }}</div>
+			</div>
 
-            <div class="result-status">
-                <div class="result-icon">
-                    {% if prediction == 'Real' %}
-                        ✓
-                    {% elif prediction == 'Misleading' %}
-                        ⚠
-                    {% else %}
-                        ✗
-                    {% endif %}
-                </div>
-                <div class="result-text {% if prediction == 'Real' %}real{% elif prediction == 'Misleading' %}misleading{% else %}fake{% endif %}">
-                    {{ prediction }}
-                </div>
-                <p class="result-description">
-                    {% if prediction == 'Real' %}
-                        This news appears to be from a reliable source and contains verified information.
-                    {% elif prediction == 'Misleading' %}
-                        This news contains elements of truth but lacks crucial context or presents information deceptively.
-                    {% else %}
-                        This news shows characteristics inconsistent with verified information sources.
-                    {% endif %}
-                </p>
-                
-                <div class="ai-reasoning">
-                    "{{ reasoning }}"
-                </div>
-            </div>
+			<div class="score {{ prediction_class }}">
+				<div>
+					<strong>{{ confidence }}%</strong>
+					<span>confidence</span>
+				</div>
+			</div>
+		</section>
 
-            <div class="confidence-badge">
-                <div class="confidence-label">Confidence Level</div>
-                <div class="confidence-value">{{ confidence }}%</div>
-            </div>
+		<section class="card" style="margin-top: 16px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+			<div>
+				<h2 style="margin: 0 0 6px;">Confidence Range</h2>
+				<p style="margin: 0; color: var(--muted);">This shows how strong the verdict is without changing the Real/Fake label.</p>
+			</div>
+			<div class="confidence-band {{ confidence_band|default('low') }}">
+				{{ confidence_band|default('low')|title }} confidence
+			</div>
+		</section>
 
-            <div class="action-buttons">
-                <a href="/" class="btn btn-primary">Check Another News</a>
-                <a href="/services" class="btn btn-secondary">Learn More</a>
-            </div>
+		<section class="grid">
+			<article class="card">
+				<span class="badge {{ prediction_class }}">{{ prediction }}</span>
+				<h2>Reasoning</h2>
+				<p>{{ reasoning }}</p>
+				{% if evidence_snippets %}
+				<h2 style="margin-top: 14px;">Top Evidence</h2>
+				<ul class="evidence-list">
+					{% for item in evidence_snippets %}
+					<li>{{ item }}</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+				{% if generated_facts %}
+				<h2 style="margin-top: 14px;">Generated Facts</h2>
+				<ul class="evidence-list">
+					{% for item in generated_facts %}
+					<li>{{ item }}</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+			</article>
 
-            <div class="result-info">
-                <div class="info-row">
-                    <span class="info-label">Classification</span>
-                    <span class="info-value">{{ prediction }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Analysis Date</span>
-                    <span class="info-value">{{ analysis_date }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Status</span>
-                    <span class="info-value">
-                        {% if prediction == 'Real' %}
-                            <span style="color: var(--success-color);">✓ Verified</span>
-                        {% elif prediction == 'Misleading' %}
-                            <span style="color: var(--warning-color);">⚠ Caution Needed</span>
-                        {% else %}
-                            <span style="color: var(--accent-color);">✗ Unverified</span>
-                        {% endif %}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
+			<article class="card">
+				<h2>Submitted Text Preview</h2>
+				<div class="excerpt">{{ source_excerpt }}</div>
+			</article>
 
-    <footer>
-        <p>&copy; 2026 VAARTHA. All rights reserved. Combating misinformation with AI.</p>
-    </footer>
+			{% if latest_news %}
+			<article class="card">
+				<h2>Latest News Checked</h2>
+				<p style="margin-bottom: 10px;">These live headlines were used as current context{% if live_news_query %} for “{{ live_news_query }}”{% endif %}.</p>
+				<ul class="evidence-list">
+					{% for item in latest_news %}
+					<li>
+						{% if item.link %}
+						<a href="{{ item.link }}" target="_blank" rel="noreferrer">{{ item.title }}</a>
+						{% else %}
+						{{ item.title }}
+						{% endif %}
+						{% if item.source %}<div style="color: var(--muted); font-size: 0.82rem; margin-top: 4px;">{{ item.source }}{% if item.published %} · {{ item.published }}{% endif %}</div>{% endif %}
+					</li>
+					{% endfor %}
+				</ul>
+				{% if live_news_match %}
+				<div class="excerpt" style="margin-top: 14px;">
+					Strong live match: {{ live_news_match.title }}
+				</div>
+				{% endif %}
+			</article>
+			{% endif %}
+		</section>
+
+		<section class="actions">
+			<button class="btn btn-primary" type="button" onclick="window.location.href='/'">↺ Refresh Home</button>
+			<a class="btn btn-soft" href="/services">View Methodology</a>
+		</section>
+
+		<footer>
+			VAARTHA Fake News AI Detector
+		</footer>
+	</div>
 </body>
 </html>
