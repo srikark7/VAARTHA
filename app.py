@@ -5,10 +5,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote_plus
 
+import numpy as np
 import requests
 from flask import Flask, jsonify, render_template, request
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -39,6 +38,7 @@ def get_embedder():
 	global EMBEDDER
 	if EMBEDDER is None:
 		try:
+			from sentence_transformers import SentenceTransformer
 			EMBEDDER = SentenceTransformer("all-MiniLM-L6-v2")
 		except Exception:
 			EMBEDDER = False
@@ -87,7 +87,8 @@ def semantic_match(text, items):
 	try:
 		corpus = [clean(text)] + [headline_text(item) for item in items]
 		embeddings = embedder.encode(corpus, convert_to_numpy=True, normalize_embeddings=True)
-		scores = cosine_similarity(embeddings[:1], embeddings[1:])[0]
+		# Embeddings are normalized, so dot product equals cosine similarity.
+		scores = embeddings[1:] @ embeddings[0]
 		best_index = int(scores.argmax()) if len(scores) else -1
 		return (items[best_index], float(scores[best_index])) if best_index >= 0 else (None, 0.0)
 	except Exception:
