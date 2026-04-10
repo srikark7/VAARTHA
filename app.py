@@ -84,11 +84,15 @@ def semantic_match(text, items):
 	embedder = get_embedder()
 	if not embedder or not items:
 		return None, 0.0
-	corpus = [clean(text)] + [headline_text(item) for item in items]
-	embeddings = embedder.encode(corpus, convert_to_numpy=True, normalize_embeddings=True)
-	scores = cosine_similarity(embeddings[:1], embeddings[1:])[0]
-	best_index = int(scores.argmax()) if len(scores) else -1
-	return (items[best_index], float(scores[best_index])) if best_index >= 0 else (None, 0.0)
+	try:
+		corpus = [clean(text)] + [headline_text(item) for item in items]
+		embeddings = embedder.encode(corpus, convert_to_numpy=True, normalize_embeddings=True)
+		scores = cosine_similarity(embeddings[:1], embeddings[1:])[0]
+		best_index = int(scores.argmax()) if len(scores) else -1
+		return (items[best_index], float(scores[best_index])) if best_index >= 0 else (None, 0.0)
+	except Exception:
+		# Fallback if embeddings fail
+		return None, 0.0
 
 
 def verdict_from_score(score):
@@ -101,7 +105,7 @@ def verdict_from_score(score):
 
 def analyze(text):
 	query = news_query(text)
-	latest = fetch_news(query)
+	latest = fetch_news(query, limit=3)  # Reduced to 3 for Render free tier memory
 	best_match, similarity = semantic_match(text, latest)
 	prediction = verdict_from_score(similarity)
 	confidence = round(similarity * 100, 1)
