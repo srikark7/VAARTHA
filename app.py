@@ -1,4 +1,5 @@
 import os
+import pickle
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -11,8 +12,18 @@ from flask import Flask, jsonify, render_template, request
 
 BASE_DIR = Path(__file__).resolve().parent
 TS_FMT = "%d %b %Y, %H:%M UTC"
-HIGH_SIM = 0.61
-MEDIUM_SIM = 0.45
+HIGH_SIM = 0.35
+MEDIUM_SIM = 0.18
+LOW_EVIDENCE = 0.08
+MODEL = None
+VECTORIZER = None
+MODEL_AVAILABLE = False
+
+STOPWORDS = {
+	"this", "that", "with", "from", "have", "has", "were", "was", "will", "would", "their",
+	"about", "after", "before", "into", "over", "under", "between", "during", "there", "which",
+	"when", "where", "your", "news", "claim", "said", "says", "report", "reported", "today"
+}
 
 MOCK_NEWS = [
 	{"title": "RCB crowned as IPL 2025 champions", "summary": "RCB won the title after a strong campaign.", "source": "Mock News", "published": "" , "link": ""},
@@ -32,12 +43,34 @@ def clean(text):
 	return re.sub(r"\s+", " ", (text or "").strip())
 
 
+def load_local_model():
+	global MODEL, VECTORIZER, MODEL_AVAILABLE
+	if MODEL is not None and VECTORIZER is not None:
+		return True
+	if MODEL_AVAILABLE is False and MODEL is None and VECTORIZER is None:
+		try:
+			with open(BASE_DIR / "model.pkl", "rb") as f:
+				MODEL = pickle.load(f)
+			with open(BASE_DIR / "vectorizer.pkl", "rb") as f:
+				VECTORIZER = pickle.load(f)
+			MODEL_AVAILABLE = True
+		except Exception:
+			MODEL_AVAILABLE = False
+			MODEL = None
+			VECTORIZER = None
+	return MODEL_AVAILABLE
+
+
 def tokens(text):
 	return {t for t in re.findall(r"[a-z0-9]+", clean(text).lower()) if len(t) > 2}
 
 
 def news_query(text):
-	return clean(text)[:140] or "latest news"
+	words = [w for w in re.findall(r"[a-z0-9]+", clean(text).lower()) if len(w) > 2 and w not in STOPWORDS]
+	if not words:
+		return "latest news"
+	# Use a short keyword query so RSS returns relevant headlines more often.
+	return " ".join(words[:8])
 
 
 
@@ -86,7 +119,10 @@ def semantic_match(text, items):
 				continue
 			intersection = len(query_tokens & candidate)
 			union = len(query_tokens | candidate)
-			score = (intersection / union) if union else 0.0
+			jaccard = (intersection / union) if union else 0.0
+			coverage = (intersection / min(len(query_tokens), len(candidate))) if min(len(query_tokens), len(candidate)) else 0.0
+			# Blended score favors shared key terms while reducing very short accidental matches.
+			score = (0.65 * coverage) + (0.35 * jaccard)
 			if score > best_score:
 				best_score = score
 				best_item = item
@@ -104,28 +140,79 @@ def verdict_from_score(score):
 	return "Fake"
 
 
+def model_predict(text):
+	if not load_local_model():
+		return None
+	try:
+		vec = VECTORIZER.transform([clean(text)])
+		pred = int(MODEL.predict(vec)[0])
+		proba = None
+		if hasattr(MODEL, "predict_proba"):
+			proba = MODEL.predict_proba(vec)[0]
+			# Label mapping from training script: 1=Fake, 0=Real
+			fake_prob = float(proba[1])
+			real_prob = float(proba[0])
+			confidence = max(fake_prob, real_prob)
+		else:
+			fake_prob = 1.0 if pred == 1 else 0.0
+			real_prob = 1.0 - fake_prob
+			confidence = 0.5
+		return {
+			"prediction": "Fake" if pred == 1 else "Real",
+			"confidence": confidence,
+			"fake_prob": fake_prob,
+			"real_prob": real_prob,
+		}
+	except Exception:
+		return None
+
+
 def analyze(text):
 	query = news_query(text)
 	latest = fetch_news(query, limit=3)  # Reduced to 3 for Render free tier memory
+	has_live_context = any((item.get("source") or "").strip().lower() != "mock news" for item in latest)
 	best_match, similarity = semantic_match(text, latest)
-	prediction = verdict_from_score(similarity)
-	confidence = round(similarity * 100, 1)
+	model_result = model_predict(text)
+
+	if model_result:
+		prediction = model_result["prediction"]
+		model_conf = model_result["confidence"]
+		# Soften hard predictions when live context is weak.
+		if (not has_live_context and model_conf < 0.75) or similarity < LOW_EVIDENCE:
+			prediction = "Misleading"
+		elif similarity >= HIGH_SIM and prediction == "Fake":
+			prediction = "Misleading"
+		blended_conf = (0.7 * model_conf) + (0.3 * similarity)
+		confidence = round(blended_conf * 100, 1)
+		analysis_source = "local-ml+live-news"
+		evidence = [
+			f"Model confidence: {model_conf * 100:.1f}%",
+			f"Live overlap score: {similarity * 100:.1f}%",
+		]
+	else:
+		prediction = verdict_from_score(similarity)
+		if not has_live_context or similarity < LOW_EVIDENCE:
+			prediction = "Misleading"
+		confidence = round(similarity * 100, 1)
+		analysis_source = "keyword-overlap"
+		evidence = [f"Best overlap score: {similarity * 100:.1f}%"]
+
 	reason = ""
 	if prediction == "Real":
-		reason = "Keyword overlap with live coverage is high, so the claim is likely aligned with current reporting."
+		reason = "Local ML prediction supports the claim, and live-news context does not contradict it."
 	elif prediction == "Misleading":
-		reason = "Keyword overlap is moderate, so the claim may be partially aligned but should be treated carefully."
+		reason = "Evidence is mixed or limited, so the claim cannot be confidently labeled real or fake."
 	else:
-		reason = "Keyword overlap with live coverage is low, so there is limited support for the claim."
+		reason = "Local ML prediction flags this text as likely fake, and live-news context does not provide strong support."
 	return {
 		"prediction": prediction,
 		"prediction_class": prediction.lower(),
 		"confidence": confidence,
-		"confidence_band": "high" if similarity >= HIGH_SIM else ("medium" if similarity >= MEDIUM_SIM else "low"),
+		"confidence_band": "high" if confidence >= 70 else ("medium" if confidence >= 40 else "low"),
 		"reasoning": reason,
-		"analysis_source": "keyword-overlap",
+		"analysis_source": analysis_source,
 		"analysis_date": now_utc().strftime(TS_FMT),
-		"evidence_snippets": [f"Best overlap score: {similarity * 100:.1f}%"],
+		"evidence_snippets": evidence,
 		"generated_facts": [f"Best matching headline: {best_match['title']}"] if best_match else [],
 		"latest_news": latest,
 		"live_news_query": query,
@@ -212,8 +299,8 @@ def api_latest_news():
 def health():
 	return jsonify({
 		"ok": True,
-		"model_loaded": True,
-		"model_state": "lightweight",
+		"model_loaded": load_local_model(),
+		"model_state": "local-ml" if MODEL_AVAILABLE else "lightweight-fallback",
 		"time": now_utc().isoformat(),
 	})
 
