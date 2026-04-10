@@ -1,13 +1,17 @@
 import os
 import pickle
 import re
+import smtplib
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from email.message import EmailMessage
+from functools import wraps
 from pathlib import Path
+from secrets import randbelow
 from urllib.parse import quote_plus
 
 import requests
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -35,12 +39,90 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "vaartha-dev-key")
 
 
+def clean(text):
+	return re.sub(r"\s+", " ", (text or "").strip())
+
+
+def parse_login_users():
+	users = {}
+	default_email = clean(os.getenv("APP_LOGIN_EMAIL", "admin@vaartha.com")).lower()
+	default_password = os.getenv("APP_LOGIN_PASSWORD", "vaartha123")
+	if default_email and default_password:
+		users[default_email] = default_password
+
+	raw_users = clean(os.getenv("APP_LOGIN_USERS", ""))
+	if raw_users:
+		for pair in raw_users.split(","):
+			parts = pair.split(":", 1)
+			if len(parts) != 2:
+				continue
+			email = clean(parts[0]).lower()
+			password = parts[1]
+			if email and password:
+				users[email] = password
+	return users
+
+
+LOGIN_USERS = parse_login_users()
+MAIL_USERNAME = clean(os.getenv("MAIL_USERNAME", ""))
+MAIL_APP_PASSWORD = os.getenv("MAIL_APP_PASSWORD", "")
+OTP_EXP_MINUTES = int(os.getenv("OTP_EXP_MINUTES", "10"))
+
+
 def now_utc():
 	return datetime.now(timezone.utc)
 
 
-def clean(text):
-	return re.sub(r"\s+", " ", (text or "").strip())
+def is_logged_in():
+	return bool(session.get("user_email"))
+
+
+def otp_is_ready():
+	return bool(MAIL_USERNAME and MAIL_APP_PASSWORD)
+
+
+def send_gmail_otp(recipient_email, otp_code):
+	msg = EmailMessage()
+	msg["Subject"] = "VAARTHA Login OTP"
+	msg["From"] = MAIL_USERNAME
+	msg["To"] = recipient_email
+	msg.set_content(
+		f"Your VAARTHA login OTP is {otp_code}. It expires in {OTP_EXP_MINUTES} minutes.\n"
+		"If you did not request this, ignore this email."
+	)
+	with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as smtp:
+		smtp.starttls()
+		smtp.login(MAIL_USERNAME, MAIL_APP_PASSWORD)
+		smtp.send_message(msg)
+
+
+def render_login(error="", message="", next_path="/", otp_email="", status_code=200):
+	return render_template(
+		"login.html",
+		error=error,
+		message=message,
+		otp_enabled=otp_is_ready(),
+		next_path=next_path,
+		otp_email=otp_email,
+	), status_code
+
+
+def authenticate_user(email, password):
+	email_key = clean(email).lower()
+	if not email_key:
+		return False
+	stored = LOGIN_USERS.get(email_key)
+	return bool(stored and stored == (password or ""))
+
+
+def login_required(view):
+	@wraps(view)
+	def wrapped(*args, **kwargs):
+		if is_logged_in():
+			return view(*args, **kwargs)
+		next_path = request.path if request.path != "/login" else "/"
+		return redirect(url_for("login", next=next_path))
+	return wrapped
 
 
 def load_local_model():
@@ -231,26 +313,124 @@ def input_text_from_request():
 
 
 @app.get("/")
+@login_required
 def home():
 	return render_template("index.html")
 
 
 @app.get("/about")
+@login_required
 def about():
 	return render_template("about.html")
 
 
 @app.get("/services")
+@login_required
 def services():
 	return render_template("services.html")
 
 
 @app.get("/contact")
+@login_required
 def contact():
 	return render_template("contact.html")
 
 
+@app.route("/login", methods=["GET", "POST"])
+def login():
+	next_path = clean(request.args.get("next", "")) or clean(request.form.get("next", "")) or "/"
+	if request.method == "GET":
+		if is_logged_in():
+			return redirect(next_path)
+		return render_login(next_path=next_path)
+
+	email = clean(request.form.get("email", "")).lower()
+	password = request.form.get("password", "")
+	if not authenticate_user(email, password):
+		return render_login(error="Invalid email or password.", next_path=next_path, status_code=401)
+
+	session["user_email"] = email
+	session["auth_provider"] = "password"
+	session.pop("otp_email", None)
+	session.pop("otp_code", None)
+	session.pop("otp_expiry", None)
+	return redirect(next_path)
+
+
+@app.post("/login/otp/send")
+def login_otp_send():
+	next_path = clean(request.form.get("next", "")) or "/"
+	email = clean(request.form.get("otp_email", "")).lower()
+	if not otp_is_ready():
+		return render_login(
+			error="Gmail OTP is not configured. Set MAIL_USERNAME and MAIL_APP_PASSWORD.",
+			next_path=next_path,
+			otp_email=email,
+			status_code=503,
+		)
+	if not email or not email.endswith("@gmail.com"):
+		return render_login(
+			error="Enter a valid Gmail address for OTP login.",
+			next_path=next_path,
+			otp_email=email,
+			status_code=400,
+		)
+	otp_code = f"{randbelow(1000000):06d}"
+	try:
+		send_gmail_otp(email, otp_code)
+	except Exception:
+		return render_login(
+			error="Could not send OTP email. Check MAIL_USERNAME/MAIL_APP_PASSWORD.",
+			next_path=next_path,
+			otp_email=email,
+			status_code=502,
+		)
+	session["otp_email"] = email
+	session["otp_code"] = otp_code
+	session["otp_expiry"] = (now_utc() + timedelta(minutes=OTP_EXP_MINUTES)).timestamp()
+	session["otp_next"] = next_path
+	return render_login(
+		message="OTP sent. Check your Gmail inbox and enter the code below.",
+		next_path=next_path,
+		otp_email=email,
+	)
+
+
+@app.post("/login/otp/verify")
+def login_otp_verify():
+	next_path = clean(request.form.get("next", "")) or session.get("otp_next") or "/"
+	email = clean(request.form.get("otp_email", "")).lower()
+	otp_input = clean(request.form.get("otp_code", ""))
+	expected_email = clean(session.get("otp_email", "")).lower()
+	expected_code = clean(session.get("otp_code", ""))
+	expiry = float(session.get("otp_expiry", 0) or 0)
+	now_ts = now_utc().timestamp()
+	if not email or not otp_input:
+		return render_login(error="Enter Gmail and OTP code.", next_path=next_path, otp_email=email, status_code=400)
+	if now_ts > expiry:
+		session.pop("otp_email", None)
+		session.pop("otp_code", None)
+		session.pop("otp_expiry", None)
+		return render_login(error="OTP expired. Request a new code.", next_path=next_path, otp_email=email, status_code=401)
+	if email != expected_email or otp_input != expected_code:
+		return render_login(error="Invalid OTP for this Gmail account.", next_path=next_path, otp_email=email, status_code=401)
+	session["user_email"] = email
+	session["auth_provider"] = "gmail-otp"
+	session.pop("otp_email", None)
+	session.pop("otp_code", None)
+	session.pop("otp_expiry", None)
+	session.pop("otp_next", None)
+	return redirect(next_path)
+
+
+@app.get("/logout")
+def logout():
+	session.clear()
+	return redirect(url_for("login"))
+
+
 @app.post("/result")
+@login_required
 def result():
 	text = input_text_from_request()
 	if not text:
