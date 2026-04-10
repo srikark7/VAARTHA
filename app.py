@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote_plus
 
-import numpy as np
 import requests
 from flask import Flask, jsonify, render_template, request
 
@@ -14,7 +13,6 @@ BASE_DIR = Path(__file__).resolve().parent
 TS_FMT = "%d %b %Y, %H:%M UTC"
 HIGH_SIM = 0.61
 MEDIUM_SIM = 0.45
-EMBEDDER = None
 
 MOCK_NEWS = [
 	{"title": "RCB crowned as IPL 2025 champions", "summary": "RCB won the title after a strong campaign.", "source": "Mock News", "published": "" , "link": ""},
@@ -34,15 +32,8 @@ def clean(text):
 	return re.sub(r"\s+", " ", (text or "").strip())
 
 
-def get_embedder():
-	global EMBEDDER
-	if EMBEDDER is None:
-		try:
-			from sentence_transformers import SentenceTransformer
-			EMBEDDER = SentenceTransformer("all-MiniLM-L6-v2")
-		except Exception:
-			EMBEDDER = False
-	return None if EMBEDDER is False else EMBEDDER
+def tokens(text):
+	return {t for t in re.findall(r"[a-z0-9]+", clean(text).lower()) if len(t) > 2}
 
 
 def news_query(text):
@@ -81,18 +72,27 @@ def headline_text(item):
 
 
 def semantic_match(text, items):
-	embedder = get_embedder()
-	if not embedder or not items:
+	if not items:
 		return None, 0.0
 	try:
-		corpus = [clean(text)] + [headline_text(item) for item in items]
-		embeddings = embedder.encode(corpus, convert_to_numpy=True, normalize_embeddings=True)
-		# Embeddings are normalized, so dot product equals cosine similarity.
-		scores = embeddings[1:] @ embeddings[0]
-		best_index = int(scores.argmax()) if len(scores) else -1
-		return (items[best_index], float(scores[best_index])) if best_index >= 0 else (None, 0.0)
+		query_tokens = tokens(text)
+		if not query_tokens:
+			return None, 0.0
+		best_item = None
+		best_score = 0.0
+		for item in items:
+			candidate = tokens(headline_text(item))
+			if not candidate:
+				continue
+			intersection = len(query_tokens & candidate)
+			union = len(query_tokens | candidate)
+			score = (intersection / union) if union else 0.0
+			if score > best_score:
+				best_score = score
+				best_item = item
+		return best_item, float(best_score)
 	except Exception:
-		# Fallback if embeddings fail
+		# Fallback if scoring fails
 		return None, 0.0
 
 
@@ -112,22 +112,20 @@ def analyze(text):
 	confidence = round(similarity * 100, 1)
 	reason = ""
 	if prediction == "Real":
-		reason = "Semantic embedding analysis shows high similarity to live coverage—the claim and news headline likely convey the same meaning."
+		reason = "Keyword overlap with live coverage is high, so the claim is likely aligned with current reporting."
 	elif prediction == "Misleading":
-		reason = "Semantic similarity is moderate—the input relates to live news but differs enough in meaning to warrant caution."
+		reason = "Keyword overlap is moderate, so the claim may be partially aligned but should be treated carefully."
 	else:
-		reason = "Semantic embedding analysis found low similarity to any live coverage—insufficient support for the claim."
-	if not get_embedder():
-		reason = "SentenceTransformer embedding model could not be loaded, analysis unavailable."
+		reason = "Keyword overlap with live coverage is low, so there is limited support for the claim."
 	return {
 		"prediction": prediction,
 		"prediction_class": prediction.lower(),
 		"confidence": confidence,
 		"confidence_band": "high" if similarity >= HIGH_SIM else ("medium" if similarity >= MEDIUM_SIM else "low"),
 		"reasoning": reason,
-		"analysis_source": "semantic",
+		"analysis_source": "keyword-overlap",
 		"analysis_date": now_utc().strftime(TS_FMT),
-		"evidence_snippets": [f"Best semantic similarity: {similarity * 100:.1f}%"],
+		"evidence_snippets": [f"Best overlap score: {similarity * 100:.1f}%"],
 		"generated_facts": [f"Best matching headline: {best_match['title']}"] if best_match else [],
 		"latest_news": latest,
 		"live_news_query": query,
@@ -212,11 +210,10 @@ def api_latest_news():
 @app.get("/api/health")
 @app.get("/health")
 def health():
-	model_state = "ready" if EMBEDDER not in (None, False) else ("not-loaded" if EMBEDDER is None else "unavailable")
 	return jsonify({
 		"ok": True,
-		"model_loaded": EMBEDDER not in (None, False),
-		"model_state": model_state,
+		"model_loaded": True,
+		"model_state": "lightweight",
 		"time": now_utc().isoformat(),
 	})
 
