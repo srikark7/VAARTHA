@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>VAARTHA | Result</title>
+	<meta name="description" content="Result page for VAARTHA fake news AI detector.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--bg: #f4f7fb;
+			--surface: #ffffff;
+			--surface-soft: #eef3fb;
+			--text: #0f172a;
+			--muted: #5b6b82;
+			--line: #d8e1ef;
+			--primary: #0a3b82;
+			--primary-2: #1555b2;
+			--accent: #0f9d8e;
+			--ok: #0f9d58;
+			--warn: #d97706;
+			--danger: #dc2626;
+			--radius-lg: 18px;
+			--radius-md: 12px;
+			--shadow: 0 18px 40px rgba(10, 59, 130, 0.09);
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Plus Jakarta Sans", Arial, sans-serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at right top, rgba(21, 85, 178, 0.12), transparent 34%),
+				radial-gradient(circle at left top, rgba(15, 157, 142, 0.08), transparent 36%),
+				var(--bg);
+		}
+
+		.container {
+			width: min(1160px, calc(100% - 30px));
+			margin: 0 auto;
+			padding: 18px 0 34px;
+		}
+
+		.topbar {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: 14px;
+			padding: 14px 18px;
+			box-shadow: var(--shadow);
+		}
+
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			color: var(--text);
+			text-decoration: none;
+		}
+
+		.brand-mark {
+			width: 42px;
+			height: 42px;
+			border-radius: 12px;
+			display: grid;
+			place-items: center;
+			font-weight: 800;
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+			letter-spacing: 0.04em;
+		}
+
+		.brand strong,
+		.brand small { display: block; }
+
+		.brand strong { letter-spacing: 0.12em; font-size: 0.95rem; }
+
+		.brand small { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
+
+		.nav {
+			display: flex;
+			gap: 14px;
+			flex-wrap: wrap;
+		}
+
+		.nav a {
+			text-decoration: none;
+			color: var(--muted);
+			font-weight: 600;
+			font-size: 0.93rem;
+		}
+
+		.nav a:hover { color: var(--primary); }
+
+		.hero {
+			margin-top: 18px;
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-lg);
+			box-shadow: var(--shadow);
+			padding: 24px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
+
+		.meta {
+			color: var(--muted);
+			font-size: 0.9rem;
+		}
+
+		.hero h1 {
+			margin: 6px 0;
+			font-size: clamp(2rem, 4vw, 3.2rem);
+			line-height: 1;
+			letter-spacing: -0.03em;
+		}
+
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			text-transform: uppercase;
+			letter-spacing: 0.13em;
+			font-size: 0.74rem;
+			color: var(--primary);
+			font-weight: 800;
+		}
+
+		.eyebrow::before {
+			content: "";
+			width: 36px;
+			height: 2px;
+			border-radius: 999px;
+			background: linear-gradient(90deg, var(--primary), var(--accent));
+		}
+
+		.score {
+			width: 155px;
+			height: 155px;
+			border-radius: 50%;
+			display: grid;
+			place-items: center;
+			text-align: center;
+			border: 9px solid #dce7f7;
+			background: var(--surface-soft);
+			flex-shrink: 0;
+		}
+
+		.score strong {
+			display: block;
+			font-size: 2rem;
+			line-height: 1;
+		}
+
+		.score span {
+			display: block;
+			margin-top: 6px;
+			color: var(--muted);
+			font-size: 0.78rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.score.real,
+		.badge.real {
+			border-color: rgba(15, 157, 88, 0.35);
+			color: var(--ok);
+		}
+
+		.score.fake,
+		.badge.fake {
+			border-color: rgba(220, 38, 38, 0.35);
+			color: var(--danger);
+		}
+
+		.score.misleading,
+		.badge.misleading {
+			border-color: rgba(217, 119, 6, 0.35);
+			color: var(--warn);
+		}
+
+		.score.insufficient,
+		.badge.insufficient {
+			border-color: rgba(71, 85, 105, 0.35);
+			color: #475569;
+		}
+
+		.grid {
+			margin-top: 16px;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 12px;
+		}
+
+		.card {
+			background: var(--surface);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow);
+			padding: 18px;
+		}
+
+		.card h2 {
+			margin: 0 0 10px;
+			font-size: 1rem;
+		}
+
+		.card p {
+			margin: 0;
+			color: var(--muted);
+			line-height: 1.7;
+			font-size: 0.93rem;
+		}
+
+		.evidence-list {
+			margin: 10px 0 0;
+			padding-left: 18px;
+			color: #334155;
+			line-height: 1.6;
+			font-size: 0.9rem;
+		}
+
+		.evidence-list li {
+			margin-bottom: 8px;
+		}
+
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid currentColor;
+			border-radius: 999px;
+			padding: 6px 10px;
+			font-size: 0.78rem;
+			font-weight: 800;
+			margin-bottom: 10px;
+			background: #fff;
+		}
+
+		.confidence-band {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 999px;
+			padding: 8px 14px;
+			font-size: 0.8rem;
+			font-weight: 800;
+			border: 1px solid #cbd5e1;
+			background: #fff;
+			color: #334155;
+		}
+
+		.confidence-band.high {
+			border-color: rgba(15, 157, 88, 0.35);
+			color: var(--ok);
+		}
+
+		.confidence-band.medium {
+			border-color: rgba(217, 119, 6, 0.35);
+			color: var(--warn);
+		}
+
+		.confidence-band.low {
+			border-color: rgba(96, 165, 250, 0.35);
+			color: var(--primary);
+		}
+
+		.excerpt {
+			margin-top: 8px;
+			background: var(--surface-soft);
+			border: 1px solid #dbe6f7;
+			border-radius: 10px;
+			padding: 12px;
+			color: #334155;
+			font-size: 0.92rem;
+			line-height: 1.7;
+			white-space: pre-wrap;
+			word-break: break-word;
+		}
+
+		.actions {
+			margin-top: 16px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.btn {
+			border: 0;
+			border-radius: 999px;
+			padding: 10px 16px;
+			font: inherit;
+			font-weight: 700;
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+		}
+
+		.btn-primary {
+			color: #fff;
+			background: linear-gradient(140deg, var(--primary), var(--primary-2));
+		}
+
+		.btn-soft {
+			color: var(--primary);
+			background: #e7f0fd;
+			border: 1px solid #ccdef8;
+		}
+
+		footer {
+			margin-top: 18px;
+			text-align: center;
+			color: var(--muted);
+			font-size: 0.87rem;
+			padding: 2px 0 8px;
+		}
+
+		@media (max-width: 980px) {
+			.grid { grid-template-columns: 1fr; }
+		}
+
+		@media (max-width: 700px) {
+			.topbar { flex-direction: column; align-items: flex-start; }
+			.hero { padding: 20px; }
+			.container { width: min(100% - 18px, 1160px); }
+			.score { width: 130px; height: 130px; }
+			.score strong { font-size: 1.7rem; }
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header class="topbar">
+			<a class="brand" href="/">
+				<span class="brand-mark">V</span>
+				<span>
+					<strong>VAARTHA</strong>
+					<small>AI-Powered Fake News Detector</small>
+				</span>
+			</a>
+			<nav class="nav">
+				<a href="/">Home</a>
+				<a href="/about">About</a>
+				<a href="/services">Services</a>
+				<a href="/contact">Contact</a>
+			</nav>
+		</header>
+
+		<section class="hero">
+			<div>
+				<span class="eyebrow">Analysis Result</span>
+				<h1>{{ prediction }}</h1>
+				<div class="meta">{{ analysis_date }} · Source: {{ analysis_source|title }}</div>
+			</div>
+
+			<div class="score {{ prediction_class }}">
+				<div>
+					<strong>{{ confidence }}%</strong>
+					<span>confidence</span>
+				</div>
+			</div>
+		</section>
+
+		<section class="card" style="margin-top: 16px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+			<div>
+				<h2 style="margin: 0 0 6px;">Confidence Range</h2>
+				<p style="margin: 0; color: var(--muted);">This shows how strong the verdict is without changing the Real/Fake label.</p>
+			</div>
+			<div class="confidence-band {{ confidence_band|default('low') }}">
+				{{ confidence_band|default('low')|title }} confidence
+			</div>
+		</section>
+
+		<section class="grid">
+			<article class="card">
+				<span class="badge {{ prediction_class }}">{{ prediction }}</span>
+				<h2>Reasoning</h2>
+				<p>{{ reasoning }}</p>
+				{% if evidence_snippets %}
+				<h2 style="margin-top: 14px;">Top Evidence</h2>
+				<ul class="evidence-list">
+					{% for item in evidence_snippets %}
+					<li>{{ item }}</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+				{% if generated_facts %}
+				<h2 style="margin-top: 14px;">Generated Facts</h2>
+				<ul class="evidence-list">
+					{% for item in generated_facts %}
+					<li>{{ item }}</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+			</article>
+
+			<article class="card">
+				<h2>Submitted Text Preview</h2>
+				<div class="excerpt">{{ source_excerpt }}</div>
+			</article>
+
+			{% if latest_news %}
+			<article class="card">
+				<h2>Latest News Checked</h2>
+				<p style="margin-bottom: 10px;">These live headlines were used as current context{% if live_news_query %} for “{{ live_news_query }}”{% endif %}.</p>
+				<ul class="evidence-list">
+					{% for item in latest_news %}
+					<li>
+						{% if item.link %}
+						<a href="{{ item.link }}" target="_blank" rel="noreferrer">{{ item.title }}</a>
+						{% else %}
+						{{ item.title }}
+						{% endif %}
+						{% if item.source %}<div style="color: var(--muted); font-size: 0.82rem; margin-top: 4px;">{{ item.source }}{% if item.published %} · {{ item.published }}{% endif %}</div>{% endif %}
+					</li>
+					{% endfor %}
+				</ul>
+				{% if live_news_match %}
+				<div class="excerpt" style="margin-top: 14px;">
+					Strong live match: {{ live_news_match.title }}
+				</div>
+				{% endif %}
+			</article>
+			{% endif %}
+		</section>
+
+		<section class="actions">
+			<button class="btn btn-primary" type="button" onclick="window.location.href='/'">↺ Refresh Home</button>
+			<a class="btn btn-soft" href="/services">View Methodology</a>
+		</section>
+
+		<footer>
+			VAARTHA Fake News AI Detector
+		</footer>
+	</div>
+</body>
+</html>
