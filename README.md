@@ -106,10 +106,3 @@ For login:
 - The app caches live headlines briefly to avoid repeated requests.
 - Low-confidence outputs are treated as Unverified instead of forcing a Real/Fake label.
 
-## Testing
-
-```bash
-curl http://127.0.0.1:5000/health
-curl -X POST http://127.0.0.1:5000/api/predict -H "Content-Type: application/json" -d "{\"text\":\"The council approved a new policy yesterday.\"}"
-curl "http://127.0.0.1:5000/api/latest-news?q=earthquake%20india"
-```
