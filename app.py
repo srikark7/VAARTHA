@@ -727,6 +727,11 @@ def analyze(text):
 			evidence.append(f"Relevant sources: {', '.join(alive_support_sources[:3])}")
 		return build_result("Real", round(max(overlap_pct, 85.0), 1), "alive-current-support", evidence, best_match, latest, query, strong_sources, medium_sources, weak_sources, has_contradictions, numeric_conflict, claim_numbers, live_numbers, direct_support_count, direct_recent_count, direct_support_sources, alive_support_count, alive_recent_count, alive_support_sources, best_score, "Current trusted coverage supports the person's active/alive status and no death evidence is present.")
 
+	elif trusted_support_count >= 1 and direct_support_count == 0 and best_score > 0.36:
+		evidence.append(f"Live overlap score is {overlap_pct:.1f}%, above the 36% real-support threshold.")
+		evidence.append("Similarity is high, but the exact claim wording is only supported indirectly by trusted sources.")
+		return build_result("Real", round(max(overlap_pct, 80.0), 1), "high-overlap-real", evidence, best_match, latest, query, strong_sources, medium_sources, weak_sources, has_contradictions, numeric_conflict, claim_numbers, live_numbers, direct_support_count, direct_recent_count, direct_support_sources, alive_support_count, alive_recent_count, alive_support_sources, best_score, "The claim has strong live overlap and related trusted coverage even though the exact wording is not directly confirmed.")
+
 	elif semantic_mismatch:
 		evidence.append("Similarity is high but exact claim meaning is not confirmed by trusted sources.")
 		return build_result("Fake", round(max(80.0, min(95.0, overlap_pct)), 1), "semantic-mismatch", evidence, best_match, latest, query, strong_sources, medium_sources, weak_sources, has_contradictions, numeric_conflict, claim_numbers, live_numbers, direct_support_count, direct_recent_count, direct_support_sources, alive_support_count, alive_recent_count, alive_support_sources, best_score, "Related news exists, but trusted sources do not confirm the exact claim.")
